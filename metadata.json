@@ -1,0 +1,6 @@
+{
+  "name": "Amazon Appeal Assistant",
+  "description": "An automated, free Amazon seller appeal system powered by AI. Paste your violation notification, receive a tailored evidence collection questionnaire, and generate a professional, printable Plan of Action (PoA).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
