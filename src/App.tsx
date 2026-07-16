@@ -78,8 +78,12 @@ export default function App() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || (flowType === "generate" ? "解析邮件失败，请确认格式。" : "解析拒绝信失败，请确认内容。"));
+        let errorMsg = flowType === "generate" ? "解析邮件失败，请确认格式。" : "解析拒绝信失败，请确认内容。";
+        try {
+          const errorData = await response.json();
+          if (errorData?.error) errorMsg = errorData.error;
+        } catch (_) {}
+        throw new Error(errorMsg);
       }
 
       const data: EmailAnalysis = await response.json();
@@ -133,8 +137,12 @@ export default function App() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "生成 PoA 失败，请检查填写内容。");
+        let errorMsg = "生成 PoA 失败，请检查填写内容。";
+        try {
+          const errorData = await response.json();
+          if (errorData?.error) errorMsg = errorData.error;
+        } catch (_) {}
+        throw new Error(errorMsg);
       }
 
       const data: GeneratedPoA = await response.json();
@@ -181,8 +189,12 @@ export default function App() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "精细润色失败。");
+        let errorMsg = "精细润色失败。";
+        try {
+          const errorData = await response.json();
+          if (errorData?.error) errorMsg = errorData.error;
+        } catch (_) {}
+        throw new Error(errorMsg);
       }
 
       const data: GeneratedPoA = await response.json();
