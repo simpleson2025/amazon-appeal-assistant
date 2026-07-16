@@ -3,15 +3,35 @@ import StepIndicator from "./components/StepIndicator";
 import NotificationInput from "./components/NotificationInput";
 import Questionnaire from "./components/Questionnaire";
 import PoaReview from "./components/PoaReview";
-import SuccessCases from "./components/SuccessCases";
+import AdminDashboard from "./components/AdminDashboard";
+import PublicSuccessCases from "./components/PublicSuccessCases";
 import { EmailAnalysis, GeneratedPoA, UploadedFile } from "./types";
 import {
   ShieldCheck, ArrowRight, BookOpen, AlertCircle, Sparkles,
-  HelpCircle, MessageCircle, FileText, CheckCircle, RefreshCw
+  HelpCircle, MessageCircle, FileText, CheckCircle, RefreshCw, ArrowLeft
 } from "lucide-react";
 
 export default function App() {
   const [currentStep, setCurrentStep] = useState<number>(1);
+
+  // Routing state
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const isParam = window.location.search.includes("admin=true");
+      const isPath = window.location.pathname.startsWith("/admin");
+      setIsAdmin(isParam || isPath);
+    };
+
+    handleUrlChange();
+    
+    // Listen to history state changes
+    window.addEventListener("popstate", handleUrlChange);
+    return () => {
+      window.removeEventListener("popstate", handleUrlChange);
+    };
+  }, []);
 
   // Flow control states: "generate" for new POA, "refine" for perfecting a rejected POA
   const [flowType, setFlowType] = useState<"generate" | "refine">("generate");
@@ -215,6 +235,55 @@ export default function App() {
     setCurrentStep(2);
   };
 
+  if (isAdmin) {
+    return (
+      <div className="min-h-screen bg-slate-950 font-sans text-slate-100 selection:bg-teal-500/30 selection:text-teal-200">
+        {/* Decorative ambient background glows */}
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-teal-500/5 rounded-full blur-[120px] pointer-events-none -z-10" />
+        <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
+
+        {/* Admin Header */}
+        <header className="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="bg-gradient-to-tr from-teal-500 to-emerald-400 p-2.5 rounded-xl shadow-lg shadow-teal-500/10 flex items-center justify-center">
+                <ShieldCheck className="h-6 w-6 text-slate-950 stroke-[2.5]" />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-base font-black text-slate-100 tracking-wide flex items-center gap-1.5">
+                  Amazon Appeal AI <span className="text-teal-400 font-medium text-xs">后台管理</span>
+                </h1>
+                <p className="text-[10px] text-slate-400">
+                  知识库与案例管理控制台
+                </p>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => {
+                window.history.pushState({}, "", "/");
+                window.dispatchEvent(new PopStateEvent("popstate"));
+              }}
+              className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-400 bg-slate-900 border border-slate-800 hover:border-teal-500/30 px-3.5 py-1.5 rounded-xl transition-all cursor-pointer font-semibold"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              返回前台生成器
+            </button>
+          </div>
+        </header>
+
+        {/* Admin Main */}
+        <main className="max-w-7xl mx-auto px-4 py-8 flex flex-col gap-8">
+          <AdminDashboard />
+        </main>
+
+        <footer className="border-t border-slate-900 bg-slate-950 py-6 text-slate-600 text-center text-xs">
+          Amazon Appeal Assistant Admin Portal © 2026.
+        </footer>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 font-sans text-slate-100 selection:bg-teal-500/30 selection:text-teal-200">
       {/* Decorative ambient background glows */}
@@ -325,6 +394,7 @@ export default function App() {
               loading={loadingPoa}
               uploadedFiles={uploadedFiles}
               emailText={emailText}
+              violationType={analysis?.violationTypeZh || analysis?.violationType}
               onStartRefine={(poaText) => {
                 setPreviousPoa(poaText);
                 setFlowType("refine");
@@ -334,16 +404,15 @@ export default function App() {
             />
           )}
         </div>
-
         {/* Static Knowledge base or Success Cases (Always visible at bottom for reference) */}
         <div className="mt-4">
           <div className="flex items-center gap-2 mb-4">
             <BookOpen className="h-5 w-5 text-teal-400" />
             <h3 className="font-bold text-base text-slate-200">
-              申诉成功实操干货案例 (卖家必读)
+              官方成功案例库 (参考指南)
             </h3>
           </div>
-          <SuccessCases />
+          <PublicSuccessCases />
         </div>
 
       </main>

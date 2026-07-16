@@ -1,8 +1,10 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
+import crypto from "crypto";
 
 dotenv.config();
 
@@ -75,75 +77,123 @@ async function generateContentWithRetry(
   }
 }
 
-// Successful Case Database for AI Reference (and for display in the UI)
-const SUCCESS_CASES = [
-  {
-    id: "case-association",
-    title: "关联销售销售限制申诉 (Section 3 Account Association)",
-    type: "Account Association",
-    rootCause: "卖家因在公共WiFi网络下登录、或浏览器Stale cookies未清理导致与已被禁账户产生关联关联，或是将子账号授权给了离职员工的个人邮箱，导致连锁封号。",
-    correctiveActions: [
-      "彻底排查所有关联设备和网络，断开不安全连接；",
-      "撤销并清除所有第三方离职员工、代运营账户的临时子账号授权；",
-      "在干净的新专线网络（静态独享IP）上部署操作设备，彻底清空浏览器Cookies；",
-      "整理并提供公司营业执照、宽带合同与缴费账单证明网络和物理环境独立。"
-    ],
-    preventiveMeasures: [
-      "推行严格的独立运营规范：专网专线专机专办，严禁非工作设备登录后台；",
-      "定期更新并审计Seller Central的用户访问权限（User Permissions）；",
-      "建立公司出入人员登记与网络访问白名单控制体系。"
-    ]
-  },
-  {
-    id: "case-brushing",
-    title: "虚假交易/操纵评论申诉 (Review Manipulation / Brushing)",
-    type: "Review Manipulation",
-    rootCause: "卖家为提升新品权重，雇佣了不专业的站外违规推广服务商（或测评机构），通过高折扣返现或违规索评，被亚马逊检测出买家账户集中异常下单和评论操纵。",
-    correctiveActions: [
-      "终止与所有违规测评机构、推广服务商的合作协议；",
-      "对全账订单开展追溯审计，筛查出所有违规订单、ASIN，列出受影响的清单；",
-      "主动向亚马逊提交涉事买家ID、测评服务商联系方式、返款凭证，并恳请撤回这些非真实评价；",
-      "清理不合规的买家索评邮件模板。"
-    ],
-    preventiveMeasures: [
-      "仅使用亚马逊官方工具进行新品推广与测评（如Amazon Vine计划、买家自动索评工具）；",
-      "对全体运营人员进行亚马逊《买家评论行为准则（Buyer Review Policy）》的合规考试和定期培训；",
-      "建立内部合规稽查机制，严禁任何形式的站外私下送礼返现活动。"
-    ]
-  },
-  {
-    id: "case-infringement",
-    title: "知识产权侵权申诉 (Intellectual Property Infringement)",
-    type: "IP Infringement",
-    rootCause: "采购团队在进行选品时，仅比对了外观而没有进行深度的设计专利、商标版权检索，导致销售的一款热销产品外观结构落入竞品外观设计专利范围内（或者在Listing中误用了竞品的品牌关键词）。",
-    correctiveActions: [
-      "立即下架并永久删除被投诉的Listing，召回或就地销毁FBA仓库中所有的相关库存；",
-      "联系权利人律师致以诚挚歉意，解释是由于供应链失误导致的误伤，并主动提出经济和解，寻求撤诉（Retraction）；",
-      "对供应商的货源重新审计，要求其提供授权证明。"
-    ],
-    preventiveMeasures: [
-      "采购端落实“双人核验选品流程”：每款新品必须通过专业的美国/欧洲专利局检索，并出具检索报告；",
-      "在选品录入系统和撰写Listing阶段，对所有涉及品牌专有名词进行自动化关键词核对，杜绝蹭热度现象；",
-      "与正规、具备自主品牌及授权书的大型供应商签订合规保证合同。"
-    ]
-  },
-  {
-    id: "case-authenticity",
-    title: "产品真实性申诉 (Product Authenticity / Inauthentic)",
-    type: "Product Authenticity",
-    rootCause: "因产品包装被压瘪、中英文标贴缺失导致买家收到货后质疑为“二手”或“伪造”，或卖家因货源为1688批发市场未开具增值税专用发票，无法提供合规链条凭证。",
-    correctiveActions: [
-      "更换质量更好的外包装箱（加装防撞护角及泡泡纸），严格质检退回库存；",
-      "向国内源头工厂补开正规的增值税专用发票（发票上的采购商信息与亚马逊店铺主体严格一致）；",
-      "提供供应商的公司信息、生产资质授权，附带采购合同、出货单、发票链条，说明产品是100%源自正规工厂生产。"
-    ],
-    preventiveMeasures: [
-      "全部改由直接向品牌方或其一级特约经销商采购，确保每次采购均取得正规全额增值税发票，并按单归档；",
-      "加强入仓前的二次检验标准（IQC），对任何有包装瑕疵的产品采取零容忍直接退回供应商政策；",
-      "在主图和详情页中加入更详实的防伪标识指导和正品验证方法。"
-    ]
+interface SuccessCase {
+  id: string;
+  title: string;
+  type: string;
+  rootCause: string;
+  correctiveActions: string[];
+  preventiveMeasures: string[];
+}
+
+let cachedCases: SuccessCase[] = [];
+const CASES_FILE_PATH = path.join(process.cwd(), "data", "success-cases.json");
+
+// Helper to load success cases
+function loadSuccessCases() {
+  try {
+    if (fs.existsSync(CASES_FILE_PATH)) {
+      const data = fs.readFileSync(CASES_FILE_PATH, "utf-8");
+      cachedCases = JSON.parse(data);
+      console.log(`[Success Cases] Loaded ${cachedCases.length} cases from ${CASES_FILE_PATH}`);
+    } else {
+      // Seed default cases
+      const defaultCases: SuccessCase[] = [
+        {
+          id: "case-association",
+          title: "关联销售销售限制申诉 (Section 3 Account Association)",
+          type: "Account Association",
+          rootCause: "卖家因在公共WiFi网络下登录、或浏览器Stale cookies未清理导致与已被禁账户产生关联关联，或是将子账号授权给了离职员工的个人邮箱，导致连锁封号。",
+          correctiveActions: [
+            "彻底排查所有关联设备和网络，断开不安全连接；",
+            "撤销并清除所有第三方离职员工、代运营账户的临时子账号授权；",
+            "在干净的新专线网络（静态独享IP）上部署操作设备，彻底清空浏览器Cookies；",
+            "整理并提供公司营业执照、宽带合同与缴费账单证明网络和物理环境独立。"
+          ],
+          preventiveMeasures: [
+            "推行严格的独立运营规范：专网专线专机专办，严禁非工作设备登录后台；",
+            "定期更新并审计Seller Central的用户访问权限（User Permissions）；",
+            "建立公司出入人员登记与网络访问白名单控制体系。"
+          ]
+        },
+        {
+          id: "case-brushing",
+          title: "虚假交易/操纵评论申诉 (Review Manipulation / Brushing)",
+          type: "Review Manipulation",
+          rootCause: "卖家为提升新品权重，雇佣了不专业的站外违规推广服务商（或测评机构），通过高折扣返现或违规索评，被亚马逊检测出买家账户集中异常下单和评论操纵。",
+          correctiveActions: [
+            "终止与所有违规测评机构、推广服务商的合作协议；",
+            "对全账订单开展追溯审计，筛查出所有违规订单、ASIN，列出受影响的清单；",
+            "主动向亚马逊提交涉事买家ID、测评服务商联系方式、返款凭证，并恳请撤回这些非真实评价；",
+            "清理不合规的买家索评邮件模板。"
+          ],
+          preventiveMeasures: [
+            "仅使用亚马逊官方工具进行新品推广与测评（如Amazon Vine计划、买家自动索评工具）；",
+            "对全体运营人员进行亚马逊《买家评论行为准则（Buyer Review Policy）》的合规考试和定期培训；",
+            "建立内部合规稽查机制，严禁任何形式的站外私下送礼返现活动。"
+          ]
+        },
+        {
+          id: "case-infringement",
+          title: "知识产权侵权申诉 (Intellectual Property Infringement)",
+          type: "IP Infringement",
+          rootCause: "采购团队在进行选品时，仅比对了外观而没有进行深度的设计专利、商标版权检索，导致销售的一款热销产品外观结构落入竞品外观设计专利范围内（或者在Listing中误用了竞品的品牌关键词）。",
+          correctiveActions: [
+            "立即下架并永久删除被投诉的Listing，召回或就地销毁FBA仓库中所有的相关库存；",
+            "联系权利人律师致以诚挚歉意，解释是由于供应链失误导致的误伤，并主动提出经济和解，寻求撤诉（Retraction）；",
+            "对供应商的货源重新审计，要求其提供授权证明。"
+          ],
+          preventiveMeasures: [
+            "采购端落实“双人核验选品流程”：每款新品必须通过专业的美国/欧洲专利局检索，并出具检索报告；",
+            "在选品录入系统和撰写Listing阶段，对所有涉及品牌专有名词进行自动化关键词核对，杜绝蹭热度现象；",
+            "与正规、具备自主品牌及授权书的大型供应商签订合规保证合同。"
+          ]
+        },
+        {
+          id: "case-authenticity",
+          title: "产品真实性申诉 (Product Authenticity / Inauthentic)",
+          type: "Product Authenticity",
+          rootCause: "因产品包装被压瘪、中英文标贴缺失导致买家收到货后质疑为“二手”或“伪造”，或卖家因货源为1688批发市场未开具增值税专用发票，无法提供合规链条凭证。",
+          correctiveActions: [
+            "更换质量更好的外包装箱（加装防撞护角及泡泡纸），严格质检退回库存；",
+            "向国内源头工厂补开正规的增值税专用发票（发票上的采购商信息与亚马逊店铺主体严格一致）；",
+            "提供供应商的公司信息、生产资质授权，附带采购合同、出货单、发票链条，说明产品是100%源自正规工厂生产。"
+          ],
+          preventiveMeasures: [
+            "全部改由直接向品牌方或其一级特约经销商采购，确保每次采购均取得正规全额增值税发票，并按单归档；",
+            "加强入仓前的二次检验标准（IQC），对任何有包装瑕疵的产品采取零容忍直接退回供应商政策；",
+            "在主图和详情页中加入更详实的防伪标识指导和正品验证方法。"
+          ]
+        }
+      ];
+
+      const dir = path.dirname(CASES_FILE_PATH);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(CASES_FILE_PATH, JSON.stringify(defaultCases, null, 2), "utf-8");
+      cachedCases = defaultCases;
+      console.log(`[Success Cases] Initialized success-cases.json with ${cachedCases.length} seed cases`);
+    }
+  } catch (err) {
+    console.error("[Success Cases] Error loading cases from file:", err);
+    cachedCases = [];
   }
-];
+}
+
+// Helper to save success cases
+function saveSuccessCases() {
+  try {
+    const dir = path.dirname(CASES_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(CASES_FILE_PATH, JSON.stringify(cachedCases, null, 2), "utf-8");
+    console.log(`[Success Cases] Saved ${cachedCases.length} cases to file`);
+  } catch (err) {
+    console.error("[Success Cases] Error saving cases to file:", err);
+  }
+}
 
 // 1. Analyze Email Endpoint
 app.post("/api/analyze-email", async (req, res) => {
@@ -402,16 +452,26 @@ app.post("/api/generate-poa", async (req, res) => {
   try {
     const ai = getGeminiClient();
 
-    // Look up reference case if matching
-    const matchingCase = SUCCESS_CASES.find(c => c.type === violationType);
-    const caseContext = matchingCase 
-      ? `
-Reference Successful Case Context for ${violationType}:
-- Root Causes identified in successful case: ${matchingCase.rootCause}
-- Core Corrective Actions in successful case: ${matchingCase.correctiveActions.join("; ")}
-- Long-term Preventive Measures in successful case: ${matchingCase.preventiveMeasures.join("; ")}
-` 
-      : "";
+    // Look up matching reference cases (up to 5 latest)
+    const matchingCases = cachedCases
+      .filter(c => c.type === violationType)
+      .slice(-5)
+      .reverse();
+
+    let caseContext = "";
+    if (matchingCases.length > 0) {
+      caseContext = `
+=========================================
+Here are ${matchingCases.length} successfully appealed reference cases of the type "${violationType}". 
+Learn from their argumentative logic, structural style, and corrective/preventive action patterns, and adapt them to draft a high-passing appeal letter:
+
+` + matchingCases.map((c, i) => `
+Reference Case #${i + 1}: ${c.title}
+- Root Cause Analysis: ${c.rootCause}
+- Completed Corrective Actions: ${c.correctiveActions.join("; ")}
+- Future Preventive Measures: ${c.preventiveMeasures.join("; ")}
+`).join("\n") + "\n=========================================\n";
+    }
 
     const systemInstruction = `
 You are a veteran Amazon appeal expert writing a formal Plan of Action (PoA) in response to Amazon's Seller Performance team.
@@ -602,13 +662,263 @@ Please generate a revised, refined, and significantly stronger Plan of Action (P
   }
 });
 
-// 3. Get Reference Success Cases Endpoint
+const ADMIN_PASSWORD = "jie32jiE**";
+
+function adminAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const authPass = req.headers["x-admin-password"] || req.query.admin_password;
+  if (authPass !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: "未授权：密码错误或已失效。" });
+  }
+  next();
+}
+
+app.use("/api/success-cases", adminAuth);
+app.use("/api/parse-case-doc", adminAuth);
+
+// 3. Success Cases CRUD Endpoints
 app.get("/api/success-cases", (req, res) => {
-  return res.json(SUCCESS_CASES);
+  return res.json([...cachedCases].reverse());
+});
+
+// Add Case
+app.post("/api/success-cases", (req, res) => {
+  const { title, type, rootCause, correctiveActions, preventiveMeasures } = req.body;
+  if (!title || !type || !rootCause) {
+    return res.status(400).json({ error: "标题、类型和根本原因为必填项。" });
+  }
+
+  const newCase: SuccessCase = {
+    id: `case-${Date.now()}`,
+    title,
+    type,
+    rootCause,
+    correctiveActions: Array.isArray(correctiveActions) ? correctiveActions : [],
+    preventiveMeasures: Array.isArray(preventiveMeasures) ? preventiveMeasures : []
+  };
+
+  cachedCases.push(newCase);
+  saveSuccessCases();
+  return res.json({ success: true, case: newCase });
+});
+
+// Edit Case
+app.put("/api/success-cases/:id", (req, res) => {
+  const { id } = req.params;
+  const { title, type, rootCause, correctiveActions, preventiveMeasures } = req.body;
+
+  const caseIndex = cachedCases.findIndex(c => c.id === id);
+  if (caseIndex === -1) {
+    return res.status(404).json({ error: "未找到指定的案例。" });
+  }
+
+  cachedCases[caseIndex] = {
+    ...cachedCases[caseIndex],
+    title: title || cachedCases[caseIndex].title,
+    type: type || cachedCases[caseIndex].type,
+    rootCause: rootCause || cachedCases[caseIndex].rootCause,
+    correctiveActions: Array.isArray(correctiveActions) ? correctiveActions : cachedCases[caseIndex].correctiveActions,
+    preventiveMeasures: Array.isArray(preventiveMeasures) ? preventiveMeasures : cachedCases[caseIndex].preventiveMeasures
+  };
+
+  saveSuccessCases();
+  return res.json({ success: true, case: cachedCases[caseIndex] });
+});
+
+// Delete Case
+app.delete("/api/success-cases/:id", (req, res) => {
+  const { id } = req.params;
+  const caseIndex = cachedCases.findIndex(c => c.id === id);
+  if (caseIndex === -1) {
+    return res.status(404).json({ error: "未找到指定的案例。" });
+  }
+
+  cachedCases.splice(caseIndex, 1);
+  saveSuccessCases();
+  return res.json({ success: true });
+});
+
+// AI Case Document Parser Endpoint
+app.post("/api/parse-case-doc", async (req, res) => {
+  const { docText } = req.body;
+  if (!docText || docText.trim() === "") {
+    return res.status(400).json({ error: "案例文档内容不能为空。" });
+  }
+
+  try {
+    const ai = getGeminiClient();
+
+    const systemInstruction = `
+You are an expert Amazon Appeal Consultant. Your goal is to analyze the user's successfully appealed Plan of Action (POA) or case document and extract structured fields in high-fidelity JSON.
+The violation type must be strictly categorized into one of:
+- "Account Association" (关联账号)
+- "IP Infringement" (侵权)
+- "Review Manipulation" (刷单/操纵评论)
+- "Product Authenticity" (产品真实性/仿品/二手当新品)
+- "Section 3 / Code of Conduct" (商业行为/销售限制/欺诈行为)
+- "Velocity Limit" (销量激增)
+- "Other" (其他违规)
+
+You must extract the core points in Chinese (简体中文).
+The JSON output must conform to the defined schema. Use "gemini-3.5-flash" for this task.
+`;
+
+    const prompt = `
+Please analyze the following successful appeal document and extract the structured components:
+"""
+${docText}
+"""
+`;
+
+    const response = await generateContentWithRetry(ai, {
+      model: "gemini-3.5-flash",
+      contents: prompt,
+      config: {
+        systemInstruction,
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          required: ["title", "type", "rootCause", "correctiveActions", "preventiveMeasures"],
+          properties: {
+            title: {
+              type: Type.STRING,
+              description: "A concise and professional Chinese title for this appeal case, e.g., '关联销售销售限制申诉 (Section 3 Account Association)' or similar."
+            },
+            type: {
+              type: Type.STRING,
+              description: "The primary standard English classification from the list: 'Account Association', 'IP Infringement', 'Review Manipulation', 'Product Authenticity', 'Section 3 / Code of Conduct', 'Velocity Limit', or 'Other'"
+            },
+            rootCause: {
+              type: Type.STRING,
+              description: "A clear summary of the root cause in Chinese (1-3 sentences)."
+            },
+            correctiveActions: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+              description: "List of immediate corrective actions taken (in Chinese, clear bullet points)."
+            },
+            preventiveMeasures: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+              description: "List of future preventive/preventative measures implemented (in Chinese, clear bullet points)."
+            }
+          }
+        }
+      }
+    });
+
+    const resultText = response.text;
+    if (!resultText) {
+      throw new Error("No response from Gemini.");
+    }
+
+    const resultJson = JSON.parse(resultText.trim());
+    return res.json(resultJson);
+
+  } catch (error: any) {
+    console.error("Error parsing case document with Gemini:", error);
+    return res.status(500).json({
+      error: "AI 案例文档解析失败，请检查网络或提供的内容。",
+      details: error.message
+    });
+  }
+});
+
+// 4. Submit manual audit request to DingTalk
+app.post("/api/submit-audit", async (req, res) => {
+  const { contact, poaText, violationType, emailText } = req.body;
+
+  if (!contact || !contact.trim()) {
+    return res.status(400).json({ error: "联系方式不能为空。" });
+  }
+
+  try {
+    const secret = "SECd99ded1fe3b26879ddd01bf75f22c99b572f4abdeb342a98844530aa48a5a5ca";
+    const webhookUrl = "https://oapi.dingtalk.com/robot/send?access_token=2470a6241b76052f5475f3025e35695b4de8749a60ac10539876e4b2d5136674";
+    
+    const timestamp = Date.now();
+    const stringToSign = `${timestamp}\n${secret}`;
+    const sign = crypto
+      .createHmac("sha256", secret)
+      .update(stringToSign)
+      .digest("base64");
+    
+    const signedUrl = `${webhookUrl}&timestamp=${timestamp}&sign=${encodeURIComponent(sign)}`;
+
+    // Prepare DingTalk Markdown message content
+    const timeString = new Date().toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" });
+    
+    // Truncate text if it's too long to prevent exceeding DingTalk message size limits
+    const maxPoaLength = 1500;
+    const truncatedPoa = poaText && poaText.length > maxPoaLength
+      ? `${poaText.substring(0, maxPoaLength)}\n\n...(内容过长，已被截断)`
+      : poaText || "未提供POA草稿";
+
+    const maxEmailLength = 1000;
+    const truncatedEmail = emailText && emailText.length > maxEmailLength
+      ? `${emailText.substring(0, maxEmailLength)}\n\n...(内容过长，已被截断)`
+      : emailText || "未提供原始邮件/申诉背景";
+
+    const messageData = {
+      msgtype: "markdown",
+      markdown: {
+        title: "新的人工审核申诉请求",
+        text: `### 🚀 收到亚马逊申诉人工审核请求
+
+**📌 基本信息**
+- **申请时间**: ${timeString}
+- **违规类型**: ${violationType || "未知类型"}
+- **联系方式**: ${contact}
+
+---
+
+**📝 POA 申诉信初稿预览**
+\`\`\`markdown
+${truncatedPoa}
+\`\`\`
+
+---
+
+**📧 原始业绩通知 / 诊断背景**
+\`\`\`text
+${truncatedEmail}
+\`\`\`
+`
+      }
+    };
+
+    const response = await fetch(signedUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(messageData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`DingTalk response not OK: ${response.statusText}`);
+    }
+
+    const data: any = await response.json();
+    if (data.errcode !== 0) {
+      console.error("[DingTalk Error]:", data);
+      throw new Error(`钉钉机器人推送失败: ${data.errmsg}`);
+    }
+
+    return res.json({ success: true, message: "人工审核请求已成功发送。" });
+  } catch (error: any) {
+    console.error("Error submitting manual audit request:", error);
+    return res.status(500).json({
+      error: "无法发送人工审核申请，请检查网络或稍后重试。",
+      details: error.message,
+    });
+  }
 });
 
 // Vite & Static file handling
 async function startServer() {
+  // Load success cases into memory cache from JSON file
+  loadSuccessCases();
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
