@@ -24,6 +24,7 @@ export interface SuccessCase {
   rootCause: string;
   correctiveActions: string[];
   preventiveMeasures: string[];
+  requiredDocuments?: string[];
 }
 
 export interface UploadedFile {

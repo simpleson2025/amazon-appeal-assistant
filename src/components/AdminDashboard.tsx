@@ -25,6 +25,7 @@ export default function AdminDashboard() {
   const [formRootCause, setFormRootCause] = useState<string>("");
   const [formCorrectiveActions, setFormCorrectiveActions] = useState<string>("");
   const [formPreventiveMeasures, setFormPreventiveMeasures] = useState<string>("");
+  const [formRequiredDocuments, setFormRequiredDocuments] = useState<string>("");
 
   // AI ingestion states
   const [pastedDocText, setPastedDocText] = useState<string>("");
@@ -121,6 +122,7 @@ export default function AdminDashboard() {
     setFormRootCause("");
     setFormCorrectiveActions("");
     setFormPreventiveMeasures("");
+    setFormRequiredDocuments("");
     setPastedDocText("");
     setParseStatus(null);
   };
@@ -134,6 +136,7 @@ export default function AdminDashboard() {
     setFormRootCause(c.rootCause);
     setFormCorrectiveActions(c.correctiveActions.join("\n"));
     setFormPreventiveMeasures(c.preventiveMeasures.join("\n"));
+    setFormRequiredDocuments((c.requiredDocuments || []).join("\n"));
     setPastedDocText("");
     setParseStatus(null);
   };
@@ -157,7 +160,8 @@ export default function AdminDashboard() {
       type: formType,
       rootCause: formRootCause,
       correctiveActions: formCorrectiveActions.split("\n").map(s => s.trim()).filter(Boolean),
-      preventiveMeasures: formPreventiveMeasures.split("\n").map(s => s.trim()).filter(Boolean)
+      preventiveMeasures: formPreventiveMeasures.split("\n").map(s => s.trim()).filter(Boolean),
+      requiredDocuments: formRequiredDocuments.split("\n").map(s => s.trim()).filter(Boolean)
     };
 
     try {
@@ -258,6 +262,7 @@ export default function AdminDashboard() {
       setFormRootCause(data.rootCause || "");
       setFormCorrectiveActions(Array.isArray(data.correctiveActions) ? data.correctiveActions.join("\n") : "");
       setFormPreventiveMeasures(Array.isArray(data.preventiveMeasures) ? data.preventiveMeasures.join("\n") : "");
+      setFormRequiredDocuments(Array.isArray(data.requiredDocuments) ? data.requiredDocuments.join("\n") : "");
 
       setParseStatus({
         type: "success",
@@ -551,6 +556,20 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+              {/* Required supporting documents */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-slate-300">
+                  用户需上传的证明材料（每行一项）
+                </label>
+                <textarea
+                  value={formRequiredDocuments}
+                  onChange={(e) => setFormRequiredDocuments(e.target.value)}
+                  placeholder={"营业执照\n法人身份证\n采购发票\n采购合同\n公证书"}
+                  className="w-full h-28 bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:border-teal-500/50 focus:outline-none resize-y font-sans leading-relaxed"
+                />
+                <p className="text-[10px] text-slate-500">保存后会作为该成功案例要求用户准备和上传的材料清单。</p>
+              </div>
+
               {/* Submit Buttons */}
               <div className="flex items-center justify-end gap-3 mt-4 border-t border-slate-850 pt-4">
                 <button
@@ -627,6 +646,7 @@ export default function AdminDashboard() {
                           <div className="flex gap-2.5 mt-1.5 text-[10px]">
                             <span className="text-teal-400/80">纠正: {c.correctiveActions.length}项</span>
                             <span className="text-emerald-400/80">预防: {c.preventiveMeasures.length}项</span>
+                            <span className="text-sky-400/80">材料: {c.requiredDocuments?.length || 0}项</span>
                           </div>
                         </td>
                         <td className="p-4 align-top whitespace-nowrap text-right text-slate-400">

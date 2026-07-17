@@ -84,6 +84,7 @@ interface SuccessCase {
   rootCause: string;
   correctiveActions: string[];
   preventiveMeasures: string[];
+  requiredDocuments?: string[];
 }
 
 let cachedCases: SuccessCase[] = [];
@@ -205,6 +206,27 @@ app.post("/api/analyze-email", async (req, res) => {
   try {
     const ai = getGeminiClient();
 
+    // The violation type is identified by the model in this same request, so provide a
+    // compact, type-grouped reference set and instruct it to use only the matching group.
+    // Limiting each type to the latest three cases keeps the prompt useful as the library grows.
+    const casesByType = new Map<string, SuccessCase[]>();
+    for (const successCase of cachedCases) {
+      const cases = casesByType.get(successCase.type) || [];
+      cases.push(successCase);
+      casesByType.set(successCase.type, cases);
+    }
+    const caseKnowledge = Array.from(casesByType.entries())
+      .map(([type, cases]) => {
+        const referenceCases = cases.slice(-3).map((successCase, index) => `
+Reference Case ${index + 1}: ${successCase.title}
+- Root cause: ${successCase.rootCause}
+- Corrective actions: ${successCase.correctiveActions.join("; ")}
+- Preventive measures: ${successCase.preventiveMeasures.join("; ")}
+- Required supporting documents: ${(successCase.requiredDocuments || []).join("; ") || "Not specified"}`);
+        return `Violation type: ${type}\n${referenceCases.join("\n")}`;
+      })
+      .join("\n\n");
+
     const systemInstruction = `
 You are an expert Amazon Appeal Consultant. Your goal is to analyze the seller's suspension or warning email and determine the precise violation details in high-fidelity JSON.
 Strictly categorize the violation into one of the following standard types:
@@ -217,6 +239,7 @@ Strictly categorize the violation into one of the following standard types:
 - "Other" (其他违规)
 
 You must output a tailored set of 3 to 5 questionnaire questions that are critical to collecting the evidence needed for generating a professional Plan of Action (PoA) of this type.
+When successful-case knowledge is supplied in the user prompt, first identify the violation type from the seller's email, then consult ONLY the reference cases under that same violation type. Use their root-cause patterns, corrective actions, preventive measures, and required supporting documents to make the questions more specific. Do not treat reference-case facts as facts about this seller; ask the seller to confirm them and request only relevant evidence.
 For example:
 - For Account Association: ask about VPS usage, past closed shops, third-party permissions, utility bill readiness.
 - For Review Manipulation: ask about specific ASIN orders, third-party reviewers/promoters, refund transactions, Vine usage.
@@ -227,7 +250,21 @@ Ensure the questionnaire questions are in Chinese, highly professional, with com
 The final output must be valid JSON conforming to the defined schema. Use "gemini-3.5-flash" for this task.
 `;
 
-    const prompt = `Please analyze this Amazon seller notification email:\n\n${emailText}\n\nProvide the analysis in structured JSON representation.`;
+    const prompt = `
+Please analyze this Amazon seller notification email:
+
+"""
+${emailText}
+"""
+
+Below is the administrator-maintained successful-case knowledge base. It is reference material only. Use only the section matching the violation type you identify from the email.
+
+<SUCCESS_CASE_KNOWLEDGE>
+${caseKnowledge || "No successful cases are currently available."}
+</SUCCESS_CASE_KNOWLEDGE>
+
+Provide the analysis and evidence-collection questionnaire in structured JSON representation.
+`;
 
     const response = await generateContentWithRetry(ai, {
       model: "gemini-3.5-flash",
@@ -682,7 +719,7 @@ app.get("/api/success-cases", (req, res) => {
 
 // Add Case
 app.post("/api/success-cases", (req, res) => {
-  const { title, type, rootCause, correctiveActions, preventiveMeasures } = req.body;
+  const { title, type, rootCause, correctiveActions, preventiveMeasures, requiredDocuments } = req.body;
   if (!title || !type || !rootCause) {
     return res.status(400).json({ error: "标题、类型和根本原因为必填项。" });
   }
@@ -693,7 +730,8 @@ app.post("/api/success-cases", (req, res) => {
     type,
     rootCause,
     correctiveActions: Array.isArray(correctiveActions) ? correctiveActions : [],
-    preventiveMeasures: Array.isArray(preventiveMeasures) ? preventiveMeasures : []
+    preventiveMeasures: Array.isArray(preventiveMeasures) ? preventiveMeasures : [],
+    requiredDocuments: Array.isArray(requiredDocuments) ? requiredDocuments : []
   };
 
   cachedCases.push(newCase);
@@ -704,7 +742,7 @@ app.post("/api/success-cases", (req, res) => {
 // Edit Case
 app.put("/api/success-cases/:id", (req, res) => {
   const { id } = req.params;
-  const { title, type, rootCause, correctiveActions, preventiveMeasures } = req.body;
+  const { title, type, rootCause, correctiveActions, preventiveMeasures, requiredDocuments } = req.body;
 
   const caseIndex = cachedCases.findIndex(c => c.id === id);
   if (caseIndex === -1) {
@@ -717,7 +755,8 @@ app.put("/api/success-cases/:id", (req, res) => {
     type: type || cachedCases[caseIndex].type,
     rootCause: rootCause || cachedCases[caseIndex].rootCause,
     correctiveActions: Array.isArray(correctiveActions) ? correctiveActions : cachedCases[caseIndex].correctiveActions,
-    preventiveMeasures: Array.isArray(preventiveMeasures) ? preventiveMeasures : cachedCases[caseIndex].preventiveMeasures
+    preventiveMeasures: Array.isArray(preventiveMeasures) ? preventiveMeasures : cachedCases[caseIndex].preventiveMeasures,
+    requiredDocuments: Array.isArray(requiredDocuments) ? requiredDocuments : cachedCases[caseIndex].requiredDocuments
   };
 
   saveSuccessCases();
@@ -777,7 +816,7 @@ ${docText}
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
-          required: ["title", "type", "rootCause", "correctiveActions", "preventiveMeasures"],
+          required: ["title", "type", "rootCause", "correctiveActions", "preventiveMeasures", "requiredDocuments"],
           properties: {
             title: {
               type: Type.STRING,
@@ -800,6 +839,11 @@ ${docText}
               type: Type.ARRAY,
               items: { type: Type.STRING },
               description: "List of future preventive/preventative measures implemented (in Chinese, clear bullet points)."
+            },
+            requiredDocuments: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+              description: "Proof documents the seller should upload for this appeal, such as business license, legal representative ID, invoices, purchase contracts, authorization letters, logistics documents, or notarized documents. Return an empty array if no document is needed."
             }
           }
         }
