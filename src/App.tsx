@@ -429,7 +429,10 @@ export default function App() {
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          <div className="flex flex-col items-center justify-center gap-2 text-center md:items-end md:text-right">
+            <span>
+              联系我们：<a className="text-teal-400 hover:text-teal-300 transition-colors" href="mailto:simpleson@dingtalk.com">simpleson@dingtalk.com</a>
+            </span>
             <span>免责声明：本工具生成的申诉信由 AI 结合历史公开成功案例合成，因店铺违规具体证据链各异，最终是否恢复以亚马逊官方审核结果为准。</span>
           </div>
         </div>

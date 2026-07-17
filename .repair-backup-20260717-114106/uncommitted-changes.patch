@@ -1,0 +1,522 @@
+﻿diff --git a/server.ts b/server.ts
+index 80d61b4..be77320 100644
+--- a/server.ts
++++ b/server.ts
+@@ -101,68 +101,120 @@ function loadSuccessCases() {
+       const defaultCases: SuccessCase[] = [
+         {
+           id: "case-association",
+-          title: "关联销售销售限制申诉 (Section 3 Account Association)",
++          title: "�唾����桅��桅��嗥𤚗霂� (Section 3 Account Association)",
+           type: "Account Association",
+-          rootCause: "卖家因在公共WiFi网络下登录、或浏览器Stale cookies未清理导致与已被禁账户产生关联关联，或是将子账号授权给了离职员工的个人邮箱，导致连锁封号。",
++          rootCause: "�硋振�惩銁�砍�WiFi蝵𤑳�銝讠蒈敶𨰻���瘚讛��沒tale cookies�芣���紡�港�撌脰◤蝳�揭�瑚漣�笔��𥪜��䈑��𡝗糓撠��韐血噡���蝏嗘�蝳餉��睃極��葵鈭粹�蝞梧�撖潸稲餈鮋�撠�噡��",
+           correctiveActions: [
+-            "彻底排查所有关联设备和网络，断开不安全连接；",
+-            "撤销并清除所有第三方离职员工、代运营账户的临时子账号授权；",
+-            "在干净的新专线网络（静态独享IP）上部署操作设备，彻底清空浏览器Cookies；",
+-            "整理并提供公司营业执照、宽带合同与缴费账单证明网络和物理环境独立。"
++            "敶餃��埝䰻���匧��磰挽憭��蝵𤑳�嚗峕鱏撘�銝滚��刻��伐�",
++            "�日�撟嗆��斗��厩洵銝㗇䲮蝳餉��睃極��誨餈鞱𨯫韐行���葩�嗅�韐血噡���嚗�",
++            "�典僕����鰵銝梶瑪蝵𤑳�嚗����𡠺鈭侵P嚗劐��函蔡�滢�霈曉�嚗�蝠摨閙�蝛箸�閫�膥Cookies嚗�",
++            "�渡�撟嗆�靘𥕦��貉𨯫銝𡁏��扼��捐撣血��䔶�蝻渲晶韐血�霂��蝵𤑳��𣬚���㴓憓�𡠺蝡卝��"
+           ],
+           preventiveMeasures: [
+-            "推行严格的独立运营规范：专网专线专机专办，严禁非工作设备登录后台；",
+-            "定期更新并审计Seller Central的用户访问权限（User Permissions）；",
+-            "建立公司出入人员登记与网络访问白名单控制体系。"
++            "�刻�銝交聢��𡠺蝡贝��亥����銝梶�銝梶瑪銝𤘪㦤銝枏�嚗䔶艇蝳��撌乩�霈曉��餃��𤾸蝱嚗�",
++            "摰𡁏��湔鰵撟嗅恣霈﹖eller Central��鍂�瑁挪�格��琜�User Permissions嚗㚁�",
++            "撱箇��砍虬�箏�鈭箏��餉扇銝𡒊�蝏𡏭挪�桃蒾�滚��批�雿梶頂��"
++          ],
++          requiredDocuments: [
++            "�砍虬�乩��抒� (擃䀹�敶抵𠧧�急�隞�)",
++            "�砍虬蝵𤑳�摰賢蒂摰㕑����銝舘��毺撈韐寡揭��/�𤑳巨",
++            "瘜蓥犖隞�”�𠹺蜓閬���乩犖�条�頨思遢霂�/�斤��屸𢒰憭滚㫲隞�",
++            "�拍��𧼮��臬�銝舘挽憭���祉��批ㄟ��/靽嘥��讛悅"
+           ]
+         },
+         {
+           id: "case-brushing",
+-          title: "虚假交易/操纵评论申诉 (Review Manipulation / Brushing)",
++          title: "�𡁜�鈭斗�/�滨熊霂�捏�唾� (Review Manipulation / Brushing)",
+           type: "Review Manipulation",
+-          rootCause: "卖家为提升新品权重，雇佣了不专业的站外违规推广服务商（或测评机构），通过高折扣返现或违规索评，被亚马逊检测出买家账户集中异常下单和评论操纵。",
++          rootCause: "�硋振銝箸���鰵����㵪���膛鈭��銝㮖����憭𤥁�閫�綫撟踵��∪�嚗��瘚贝��箸�嚗㚁��朞�擃䀹�����唳�餈肽�蝝Ｚ�嚗諹◤鈭𡁻帕�𦠜�瘚见枂銋啣振韐行���葉撘�虜銝见��諹�霈箸�蝥萸��",
+           correctiveActions: [
+-            "终止与所有违规测评机构、推广服务商的合作协议；",
+-            "对全账订单开展追溯审计，筛查出所有违规订单、ASIN，列出受影响的清单；",
+-            "主动向亚马逊提交涉事买家ID、测评服务商联系方式、返款凭证，并恳请撤回这些非真实评价；",
+-            "清理不合规的买家索评邮件模板。"
++            "蝏�迫銝擧��㕑�閫��霂�㦤����綫撟踵��∪����雿𨅯�霈殷�",
++            "撖孵�韐西恥�訫�撅閗蕭皞臬恣霈∴�蝑𥟇䰻�箸��㕑�閫�恥�𨰻��SIN嚗���箏�敶勗�����𤏪�",
++            "銝餃𢆡�睲�撽祇�𦠜�鈭斗�鈭衤僭摰貂D���霂���∪��𠉛頂�孵����甈曉鐯霂��撟嗆�霂瑟伃�噼�鈭偦��笔�霂�遠嚗�",
++            "皜��銝滚�閫��銋啣振蝝Ｚ��桐辣璅⊥踎��"
+           ],
+           preventiveMeasures: [
+-            "仅使用亚马逊官方工具进行新品推广与测评（如Amazon Vine计划、买家自动索评工具）；",
+-            "对全体运营人员进行亚马逊《买家评论行为准则（Buyer Review Policy）》的合规考试和定期培训；",
+-            "建立内部合规稽查机制，严禁任何形式的站外私下送礼返现活动。"
++            "隞�蝙�其�撽祇�𠰴��孵極�瑁�銵峕鰵��綫撟蹂�瘚贝�嚗��Amazon Vine霈∪���僭摰嗉䌊�函揣霂�極�瘀�嚗�",
++            "撖孵�雿栞��乩犖�䁅�銵䔶�撽祇�𨳍�𠹺僭摰嗉�霈箄�銝箏��辷�Buyer Review Policy嚗剹�讠�����������笔畺霈哨�",
++            "撱箇�������蝔賣䰻�箏�嚗䔶艇蝳�遙雿訫耦撘讐�蝡坔�蝘����兮餈𠉛緵瘣餃𢆡��"
++          ],
++          requiredDocuments: [
++            "餈肽�瘚贝�霈Ｗ�鈭斗��芸㦛 (��鉄銋啣振ID�𡃏�甈曉鐯霂�)",
++            "銝𡒊洵銝㗇䲮瘚贝��滚𦛚��/瘚贝�銝凋����憭抵扇敶閙�����讛悅",
++            "隞𦒘�撽祇�𠰴�摰嗡葉敹��頧賜��堒蔣��SIN霈Ｗ��亥”",
++            "������餈鞱𨯫蝞∠�閫��銝𤾸�撌交�憭��𡁜�銋�"
+           ]
+         },
+         {
+           id: "case-infringement",
+-          title: "知识产权侵权申诉 (Intellectual Property Infringement)",
++          title: "�亥�鈭扳�靘菜��唾� (Intellectual Property Infringement)",
+           type: "IP Infringement",
+-          rootCause: "采购团队在进行选品时，仅比对了外观而没有进行深度的设计专利、商标版权检索，导致销售的一款热销产品外观结构落入竞品外观设计专利范围内（或者在Listing中误用了竞品的品牌关键词）。",
++          rootCause: "��揚�ａ��刻�銵屸�匧��塚�隞��撖嫣�憭𤥁��峕瓷�㕑�銵峕楛摨衣�霈曇恣銝枏⏚���������蝝ｇ�撖潸稲���桃�銝�甈曄���鈭批�憭𤥁�蝏𤘪��賢�蝡𧼮�憭𤥁�霈曇恣銝枏⏚��凒����𤥁��銁Listing銝剛秤�其�蝡𧼮��������株�嚗剹��",
++          correctiveActions: [
++            "蝡见朖銝𧢲沲撟嗆偶銋���方◤�閗���isting嚗�𡢢�墧�撠勗𧑐��瘥�BA隞枏�銝剜��厩��詨�摨枏�嚗�",
++            "�𠉛頂��⏚鈭箏�撣�稲隞亥��𡁏��𧶏�閫���舐眏鈭𦒘�摨娪曎憭梯秤撖潸稲��秤隡歹�撟嗡蜓�冽��箇�瘚𤾸�閫��撖餅��方�嚗㇌etraction嚗㚁�",
++            "撖嫣�摨𥪜���揮皞鞾��啣恣霈∴�閬���嗆�靘𥟇�����汿��"
++          ],
++          preventiveMeasures: [
++            "��揚蝡航氜摰嫰�𨅯�鈭箸瓲撉屸�匧�瘚���嘅�瘥𤩺狡�啣�敹�◆�朞�銝㮖������/甈扳散銝枏⏚撅�璉�蝝ｇ�撟嗅枂�瑟�蝝Ｘ𥁒�𠺪�",
++            "�券�匧�敶訫�蝟餌��峕兛�竏isting�嗆挾嚗�笆���㗇��𠰴��䔶��匧�霂滩�銵諹䌊�典��喲睸霂齿瓲撖對��𦦵�頩剔�摨衣緵鞊∴�",
++            "銝擧迤閫����憭�䌊銝餃�������銋衣�憭批�靘𥕦���倌霈Ｗ�閫��霂���䎚��"
++          ],
++          requiredDocuments: [
++            "甇��皞𣂼仍靘𥕦������揚�𤑳巨 (��雿梶緵鋡急�霂匧��������𦠜㺭��)",
++            "靘𥕦���������⏚鈭箇����銋� (Letter of Authorization) �𤥁�韐折曎��",
++            "銝擧��拐犖敺见�/隞�”瘝罸�𡁏伃霂厩��諹圾�讛悅�㚚��甈曉鐯霂�",
++            "FBA摨枏���隞�/��瘥�⏛�暹��𣳇膄Listing����唳⏛��"
++          ]
++        },
++        {
++          id: "case-authenticity",
++          title: "鈭批��笔��抒𤚗霂� (Product Authenticity / Inauthentic)",
++          type: "Product Authenticity",
++          rootCause: "�牐漣���鋆�◤�讠𪊶��葉�望���斐蝻箏仃撖潸稲銋啣振�嗅�韐批�韐函�銝算�靝��𦥑�脲��靝憚�罱�嘅��硋�摰嗅�韐扳�銝�1688�孵�撣�㦤�芸��瑕��潛�銝梶鍂�𤑳巨嚗峕�瘜閙�靘𥕦�閫�曎�∪鐯霂���",
++          correctiveActions: [
++            "�湔揢韐券��游末������蝞梧��㰘��脫��方��𦠜部瘜∠爾嚗㚁�銝交聢韐冽����𧼮�摮矋�",
++            "�穃𤙴���憭游極��‘撘�甇������潛�銝梶鍂�𤑳巨嚗��蟡其����韐剖�靽⊥�銝𦒘�撽祇�𠰴��箔蜓雿㮖艇�潔��湛�嚗�",
++            "�𣂷�靘𥕦�����砍虬靽⊥����鈭扯�韐冽������蒂��揚�����枂韐批����蟡券曎�∴�霂湔�鈭批���100%皞鞱䌊甇��撌亙��煺漣��"
++          ],
++          preventiveMeasures: [
++            "�券��寧眏�湔𦻖�穃��峕䲮�硋�銝�蝥抒鸌蝥衣������韐哨�蝖桐�瘥𤩺活��揚���敺埈迤閫��憸嘥��潛��𤑳巨嚗�僎�匧�敶埝﹝嚗�",
++            "�惩撩�乩��滨�鈭峕活璉�撉峕����IQC嚗㚁�撖嫣遙雿閙�����閧鮟��漣����㚚妟摰孵��湔𦻖���硺�摨𥪜��輻�嚗�",
++            "�其蜓�曉�霂行�憿萎葉�惩��渲祕摰䂿��脖憚�����紡�峕迤���霂�䲮瘜𨰻��"
++          ],
++          requiredDocuments: [
++            "�賢振甇��憓𧼮�潛�銝梶鍂�𤑳巨 (撘�蟡冽𠯫�罸��刻◤撠��銋见�嚗䔶��砍仍銝𦒘�撽祇�𠰴��唬���)",
++            "皞𣂼仍撌亙����鈭扯�韐刻�銋� / �乩��抒�",
++            "����寞迤撘誩��峕���髡�碶�蝥抒�����迤撘誯��桀���",
++            "靘𥕦���枂韐批����韐抒�瘚���訫�鋆�拳��"
++          ]
++        }
++      ];湧��桃�銝�甈曄���鈭批�憭𤥁�蝏𤘪��賢�蝡𧼮�憭𤥁�霈曇恣銝枏⏚��凒����𤥁��銁Listing銝剛秤�其�蝡𧼮��������株�嚗剹��",
+           correctiveActions: [
+-            "立即下架并永久删除被投诉的Listing，召回或就地销毁FBA仓库中所有的相关库存；",
+-            "联系权利人律师致以诚挚歉意，解释是由于供应链失误导致的误伤，并主动提出经济和解，寻求撤诉（Retraction）；",
+-            "对供应商的货源重新审计，要求其提供授权证明。"
++            "蝡见朖銝𧢲沲撟嗆偶銋���方◤�閗���isting嚗�𡢢�墧�撠勗𧑐��瘥�BA隞枏�銝剜��厩��詨�摨枏�嚗�",
++            "�𠉛頂��⏚鈭箏�撣�稲隞亥��𡁏��𧶏�閫���舐眏鈭𦒘�摨娪曎憭梯秤撖潸稲��秤隡歹�撟嗡蜓�冽��箇�瘚𤾸�閫��撖餅��方�嚗㇌etraction嚗㚁�",
++            "撖嫣�摨𥪜���揮皞鞾��啣恣霈∴�閬���嗆�靘𥟇�����汿��"
+           ],
+           preventiveMeasures: [
+-            "采购端落实“双人核验选品流程”：每款新品必须通过专业的美国/欧洲专利局检索，并出具检索报告；",
+-            "在选品录入系统和撰写Listing阶段，对所有涉及品牌专有名词进行自动化关键词核对，杜绝蹭热度现象；",
+-            "与正规、具备自主品牌及授权书的大型供应商签订合规保证合同。"
++            "��揚蝡航氜摰嫰�𨅯�鈭箸瓲撉屸�匧�瘚���嘅�瘥𤩺狡�啣�敹�◆�朞�銝㮖������/甈扳散銝枏⏚撅�璉�蝝ｇ�撟嗅枂�瑟�蝝Ｘ𥁒�𠺪�",
++            "�券�匧�敶訫�蝟餌��峕兛�竏isting�嗆挾嚗�笆���㗇��𠰴��䔶��匧�霂滩�銵諹䌊�典��喲睸霂齿瓲撖對��𦦵�頩剔�摨衣緵鞊∴�",
++            "銝擧迤閫����憭�䌊銝餃�������銋衣�憭批�靘𥕦���倌霈Ｗ�閫��霂���䎚��"
+           ]
+         },
+         {
+           id: "case-authenticity",
+-          title: "产品真实性申诉 (Product Authenticity / Inauthentic)",
++          title: "鈭批��笔��抒𤚗霂� (Product Authenticity / Inauthentic)",
+           type: "Product Authenticity",
+-          rootCause: "因产品包装被压瘪、中英文标贴缺失导致买家收到货后质疑为“二手”或“伪造”，或卖家因货源为1688批发市场未开具增值税专用发票，无法提供合规链条凭证。",
++          rootCause: "�牐漣���鋆�◤�讠𪊶��葉�望���斐蝻箏仃撖潸稲銋啣振�嗅�韐批�韐函�銝算�靝��𦥑�脲��靝憚�罱�嘅��硋�摰嗅�韐扳�銝�1688�孵�撣�㦤�芸��瑕��潛�銝梶鍂�𤑳巨嚗峕�瘜閙�靘𥕦�閫�曎�∪鐯霂���",
+           correctiveActions: [
+-            "更换质量更好的外包装箱（加装防撞护角及泡泡纸），严格质检退回库存；",
+-            "向国内源头工厂补开正规的增值税专用发票（发票上的采购商信息与亚马逊店铺主体严格一致）；",
+-            "提供供应商的公司信息、生产资质授权，附带采购合同、出货单、发票链条，说明产品是100%源自正规工厂生产。"
++            "�湔揢韐券��游末������蝞梧��㰘��脫��方��𦠜部瘜∠爾嚗㚁�銝交聢韐冽����𧼮�摮矋�",
++            "�穃𤙴���憭游極��‘撘�甇������潛�銝梶鍂�𤑳巨嚗��蟡其����韐剖�靽⊥�銝𦒘�撽祇�𠰴��箔蜓雿㮖艇�潔��湛�嚗�",
++            "�𣂷�靘𥕦�����砍虬靽⊥����鈭扯�韐冽������蒂��揚�����枂韐批����蟡券曎�∴�霂湔�鈭批���100%皞鞱䌊甇��撌亙��煺漣��"
+           ],
+           preventiveMeasures: [
+-            "全部改由直接向品牌方或其一级特约经销商采购，确保每次采购均取得正规全额增值税发票，并按单归档；",
+-            "加强入仓前的二次检验标准（IQC），对任何有包装瑕疵的产品采取零容忍直接退回供应商政策；",
+-            "在主图和详情页中加入更详实的防伪标识指导和正品验证方法。"
++            "�券��寧眏�湔𦻖�穃��峕䲮�硋�銝�蝥抒鸌蝥衣������韐哨�蝖桐�瘥𤩺活��揚���敺埈迤閫��憸嘥��潛��𤑳巨嚗�僎�匧�敶埝﹝嚗�",
++            "�惩撩�乩��滨�鈭峕活璉�撉峕����IQC嚗㚁�撖嫣遙雿閙�����閧鮟��漣����㚚妟摰孵��湔𦻖���硺�摨𥪜��輻�嚗�",
++            "�其蜓�曉�霂行�憿萎葉�惩��渲祕摰䂿��脖憚�����紡�峕迤���霂�䲮瘜𨰻��"
+           ]
+         }
+       ];
+@@ -199,7 +251,7 @@ function saveSuccessCases() {
+ app.post("/api/analyze-email", async (req, res) => {
+   const { emailText } = req.body;
+   if (!emailText || emailText.trim() === "") {
+-    return res.status(400).json({ error: "违规邮件内容不能为空。" });
++    return res.status(400).json({ error: "餈肽��桐辣��捆銝滩�銝箇征��" });
+   }
+ 
+   try {
+@@ -208,13 +260,13 @@ app.post("/api/analyze-email", async (req, res) => {
+     const systemInstruction = `
+ You are an expert Amazon Appeal Consultant. Your goal is to analyze the seller's suspension or warning email and determine the precise violation details in high-fidelity JSON.
+ Strictly categorize the violation into one of the following standard types:
+-- "Account Association" (关联账号)
+-- "IP Infringement" (侵权)
+-- "Review Manipulation" (刷单/操纵评论)
+-- "Product Authenticity" (产品真实性/仿品/二手当新品)
+-- "Section 3 / Code of Conduct" (商业行为/销售限制/欺诈行为)
+-- "Velocity Limit" (销量激增)
+-- "Other" (其他违规)
++- "Account Association" (�唾�韐血噡)
++- "IP Infringement" (靘菜�)
++- "Review Manipulation" (�瑕�/�滨熊霂�捏)
++- "Product Authenticity" (鈭批��笔���/隞踹�/鈭峕�敶𤘪鰵��)
++- "Section 3 / Code of Conduct" (���銵䔶蛹/���桅���/甈箄�銵䔶蛹)
++- "Velocity Limit" (���𤩺�憓�)
++- "Other" (�嗡�餈肽�)
+ 
+ You must output a tailored set of 3 to 5 questionnaire questions that are critical to collecting the evidence needed for generating a professional Plan of Action (PoA) of this type.
+ For example:
+@@ -223,7 +275,7 @@ For example:
+ - For IP Infringement: ask about the patented keyword or design, letters of authorization, retraction progress, stock disposal.
+ - For Product Authenticity: ask about invoices from suppliers, packaging issues, logistics chains.
+ 
+-Ensure the questionnaire questions are in Chinese, highly professional, with complete explanations, descriptions, and lists of "proof materials required" (支持性证据证明材料).
++Ensure the questionnaire questions are in Chinese, highly professional, with complete explanations, descriptions, and lists of "proof materials required" (�舀��扯��株��擧���).
+ The final output must be valid JSON conforming to the defined schema. Use "gemini-3.5-flash" for this task.
+ `;
+ 
+@@ -305,7 +357,7 @@ The final output must be valid JSON conforming to the defined schema. Use "gemin
+ app.post("/api/analyze-rejection", async (req, res) => {
+   const { previousPoa, rejectionEmail } = req.body;
+   if (!previousPoa || previousPoa.trim() === "" || !rejectionEmail || rejectionEmail.trim() === "") {
+-    return res.status(400).json({ error: "原提交的 POA 及亚马逊拒信内容不能为空。" });
++    return res.status(400).json({ error: "���鈭斤� POA �𠹺�撽祇�𦠜�靽∪�摰嫣��賭蛹蝛箝��" });
+   }
+ 
+   try {
+@@ -314,17 +366,17 @@ app.post("/api/analyze-rejection", async (req, res) => {
+     const systemInstruction = `
+ You are an expert Amazon Appeal Consultant. Your goal is to analyze the seller's previously submitted Plan of Action (POA) and the subsequent rejection email/notification from Amazon Seller Performance.
+ Strictly categorize the violation into one of the following standard types:
+-- "Account Association" (关联账号)
+-- "IP Infringement" (侵权)
+-- "Review Manipulation" (刷单/操纵评论)
+-- "Product Authenticity" (产品真实性/仿品/二手当新品)
+-- "Section 3 / Code of Conduct" (商业行为/销售限制/欺诈行为)
+-- "Velocity Limit" (销量激增)
+-- "Other" (其他违规)
++- "Account Association" (�唾�韐血噡)
++- "IP Infringement" (靘菜�)
++- "Review Manipulation" (�瑕�/�滨熊霂�捏)
++- "Product Authenticity" (鈭批��笔���/隞踹�/鈭峕�敶𤘪鰵��)
++- "Section 3 / Code of Conduct" (���銵䔶蛹/���桅���/甈箄�銵䔶蛹)
++- "Velocity Limit" (���𤩺�憓�)
++- "Other" (�嗡�餈肽�)
+ 
+ You must analyze the gap between the submitted POA and the rejection email. Identify exactly what Amazon found insufficient (e.g. root cause not detailed enough, lack of proof invoices, lack of specific preventive measures, etc.).
+ Then, output a tailored set of 3 to 5 questionnaire questions in Chinese that are critical to collecting the missing evidence or explanations needed to address the gaps identified by Amazon.
+-Ensure the questionnaire questions are in Chinese, highly professional, with complete explanations, descriptions, and lists of "proof materials required" (支持性证据证明材料).
++Ensure the questionnaire questions are in Chinese, highly professional, with complete explanations, descriptions, and lists of "proof materials required" (�舀��扯��株��擧���).
+ The final output must be valid JSON conforming to the defined schema. Use "gemini-3.5-flash" for this task.
+ `;
+ 
+@@ -409,7 +461,7 @@ Please analyze the rejection grounds and output the gap analysis and follow-up q
+   } catch (error: any) {
+     console.error("Error analyzing rejection with Gemini:", error);
+     return res.status(500).json({
+-      error: "AI 拒信解析失败，请检查网络或提供的内容。",
++      error: "AI �雴縑閫��憭梯揖嚗諹窈璉��亦�蝏𨀣��𣂷����摰嫘��",
+       details: error.message
+     });
+   }
+@@ -421,7 +473,7 @@ Please analyze the rejection grounds and output the gap analysis and follow-up q
+ function cleanChineseFromEnglishPoa(text: string): string {
+   if (!text) return text;
+   
+-  // 1. Remove parenthesized text that contains Chinese characters (e.g. (缺少配件及英文说明书), （中文说明）)
++  // 1. Remove parenthesized text that contains Chinese characters (e.g. (蝻箏��滢辣�𡃏㘚��秩�𦒘髡), 嚗�葉��秩�𠬍�)
+   let cleaned = text.replace(/[\(\uff08][^\)\uff09]*[\u4e00-\u9fa5]+[^\)\uff09]*[\)\uff09]/g, "");
+ 
+   // 2. Remove any remaining Chinese characters (in case there are standalone Chinese characters)
+@@ -446,7 +498,7 @@ app.post("/api/generate-poa", async (req, res) => {
+   const { emailText, violationType, answers, additionalNotes, expertAdjustments } = req.body;
+ 
+   if (!emailText) {
+-    return res.status(400).json({ error: "违规邮件及基本信息缺失，无法生成 PoA。" });
++    return res.status(400).json({ error: "餈肽��桐辣�𠰴抅�砌縑�舐撩憭梧��䭾���� PoA��" });
+   }
+ 
+   try {
+@@ -476,9 +528,9 @@ Reference Case #${i + 1}: ${c.title}
+     const systemInstruction = `
+ You are a veteran Amazon appeal expert writing a formal Plan of Action (PoA) in response to Amazon's Seller Performance team.
+ 
+-CRITICAL RULE: The generated "poaMarkdown" MUST NOT contain any Chinese characters (中文汉字). Every single word, header, description, and list item in "poaMarkdown" must be written in English. Translate any Chinese inputs (such as the seller's answers or reference cases) fully into English.
++CRITICAL RULE: The generated "poaMarkdown" MUST NOT contain any Chinese characters (銝剜�瘙匧�). Every single word, header, description, and list item in "poaMarkdown" must be written in English. Translate any Chinese inputs (such as the seller's answers or reference cases) fully into English.
+ 
+-Absolute Cleanliness: You must never write parentheses containing Chinese text next to English terms, e.g. DO NOT write "Missing English Manuals (缺少说明书)" or "ROOT CAUSE (根本原因)", write ONLY "Missing English Manuals" or "ROOT CAUSE".
++Absolute Cleanliness: You must never write parentheses containing Chinese text next to English terms, e.g. DO NOT write "Missing English Manuals (蝻箏�霂湔�銋�)" or "ROOT CAUSE (�寞𧋦�笔�)", write ONLY "Missing English Manuals" or "ROOT CAUSE".
+ 
+ A successful Amazon PoA must be highly structured, logical, objective, sincere, and actionable. It MUST cover the three pillars:
+ 1. WHAT WAS THE ROOT CAUSE? (Be extremely specific, take responsibility, explain exactly why it happened without making excuses, e.g. operational gaps, lack of double-verification, untrained staff, supplier audit failures, shared network trace).
+@@ -494,21 +546,20 @@ Additional Context Provided:
+ ${caseContext}
+ 
+ Instructions:
+-- Write the final PoA strictly and entirely in English (which is the required language for Amazon's Seller Performance team). Under no circumstances should any Chinese translations, annotations, or inline explanations in parentheses (such as "(问题根本原因)" or "(包装破损)") be included in the "poaMarkdown" text. The final text must be 100% pure professional English.
++- Write the final PoA strictly and entirely in English (which is the required language for Amazon's Seller Performance team). Under no circumstances should any Chinese translations, annotations, or inline explanations in parentheses (such as "(�桅��寞𧋦�笔�)" or "(����湔�)") be included in the "poaMarkdown" text. The final text must be 100% pure professional English.
+ - Do not include any title, header, or metadata block at the top of the PoA, such as "# PLAN OF ACTION (PoA)", "To: Amazon Seller Performance Team", "Regarding:...", or "Date:...". Start the PoA content directly with the salutation: "Dear Amazon Seller Performance Team,".
+ - Use a highly clear structure with bold headers, bullet points, and inventory numbers.
+ - Do not use generic filler words. Be precise, citing the relevant numbers, ASINs, dates, or specific documents mentioned in the seller's answers.
+-- Incorporate any "Expert/Service Provider Adjustments" directly to fine-tune the tone or highlight specific defense points.
+-- Do not include any generic signature lines or placeholder team/company names (such as "Customer Compliance Team", "Sincerely, Customer Compliance Team", "[Your Company Name]", or "[Your Store Name]") at the end of the PoA. The PoA should end with a polite closing like "Sincerely," (with no name following it) or simply end the text after the final paragraph/sentence.
++- Do not include any generic signature lines or placeholder team/company names.
+ - Output a valid JSON with three fields:
+   1. "poaMarkdown": The full, ready-to-use professional Plan of Action in English formatted in rich Markdown.
+-  2. "poaMarkdownZh": The complete, high-quality Chinese translation of the generated English PoA in "poaMarkdown". It must preserve the exact same structure, headings, bold text, lists, and spacing as the English version, so that non-English speakers can easily review it or output it. Translate the opening salutation (e.g. "Dear Amazon Seller Performance Team,") to a professional Chinese equivalent like "尊敬的亚马逊卖家绩效团队：" and the closing (e.g. "Sincerely,") to "此致敬礼 / 敬上".
+-  3. "expertAuditSuggestions": A bulleted list (in Chinese) of tips from our service provider team for the seller on how to submit this PoA successfully (e.g. file size, invoice match, submitting method).
++  2. "poaMarkdownZh": The complete, high-quality Chinese translation of the generated English PoA in "poaMarkdown".
++  3. "expertAuditSuggestions": A bulleted list (in Chinese) of tips from our service provider team for the seller on how to submit this PoA successfully.
+ `;
+ 
+     const prompt = `
+ Please draft a professional Plan of Action (PoA) in "poaMarkdown" and audit recommendations in "expertAuditSuggestions".
+-CRITICAL REMINDER: The "poaMarkdown" text must be 100% strictly in English. Do not include any Chinese characters (中文汉字) or parentheses with Chinese translations (e.g. do not write things like "(根本原因分析)" or "(增值税发票)").
++CRITICAL REMINDER: The "poaMarkdown" text must be 100% strictly in English.
+ `;
+ 
+     const response = await generateContentWithRetry(ai, {
+@@ -555,7 +606,7 @@ CRITICAL REMINDER: The "poaMarkdown" text must be 100% strictly in English. Do n
+   } catch (error: any) {
+     console.error("Error generating PoA with Gemini:", error);
+     return res.status(500).json({
+-      error: "AI 申诉信 (PoA) 生成失败，请稍后重试。",
++      error: "AI �唾�靽� (PoA) ���憭梯揖嚗諹窈蝔滚��滩���",
+       details: error.message
+     });
+   }
+@@ -566,7 +617,7 @@ app.post("/api/refine-poa", async (req, res) => {
+   const { previousPoa, rejectionEmail, violationType, answers, expertAdjustments } = req.body;
+ 
+   if (!previousPoa || !rejectionEmail) {
+-    return res.status(400).json({ error: "原提交的 POA 及亚马逊拒信内容缺失，无法进行完善。" });
++    return res.status(400).json({ error: "���鈭斤� POA �𠹺�撽祇�𦠜�靽∪�摰寧撩憭梧��䭾�餈𥡝�摰����" });
+   }
+ 
+   try {
+@@ -575,9 +626,9 @@ app.post("/api/refine-poa", async (req, res) => {
+     const systemInstruction = `
+ You are a veteran Amazon appeal expert writing a refined, corrected Plan of Action (PoA) in response to Amazon's Seller Performance team rejecting a previous submission.
+ 
+-CRITICAL RULE: The generated "poaMarkdown" MUST NOT contain any Chinese characters (中文汉字). Every single word, header, description, and list item in "poaMarkdown" must be written in English. Translate any Chinese inputs (such as the seller's answers) fully into English.
++CRITICAL RULE: The generated "poaMarkdown" MUST NOT contain any Chinese characters (銝剜�瘙匧�). Every single word, header, description, and list item in "poaMarkdown" must be written in English. Translate any Chinese inputs (such as the seller's answers) fully into English.
+ 
+-Absolute Cleanliness: You must never write parentheses containing Chinese text next to English terms, e.g. DO NOT write "Missing English Manuals (缺少说明书)" or "ROOT CAUSE (根本原因)", write ONLY "Missing English Manuals" or "ROOT CAUSE".
++Absolute Cleanliness: You must never write parentheses containing Chinese text next to English terms, e.g. DO NOT write "Missing English Manuals (蝻箏�霂湔�銋�)" or "ROOT CAUSE (�寞𧋦�笔�)", write ONLY "Missing English Manuals" or "ROOT CAUSE".
+ 
+ Your goal is to take the "previousPoa", analyze the gaps highlighted in "rejectionEmail", and incorporate the seller's new "answers" to rewrite and perfect the POA.
+ - Address the rejection points directly and with higher specificity.
+@@ -588,7 +639,7 @@ Do not include any title, header, or metadata block at the top of the PoA. Start
+ The PoA should end with a polite closing like "Sincerely," (with no name following it).
+ Output a valid JSON with three fields:
+   1. "poaMarkdown": The refined Plan of Action in English formatted in rich Markdown.
+-  2. "poaMarkdownZh": The complete, high-quality Chinese translation of the refined English PoA in "poaMarkdown". It must preserve the exact same structure, headings, bold text, lists, and spacing as the English version. Translate the opening salutation (e.g. "Dear Amazon Seller Performance Team,") to a professional Chinese equivalent like "尊敬的亚马逊卖家绩效团队：" and the closing (e.g. "Sincerely,") to "此致敬礼 / 敬上".
++  2. "poaMarkdownZh": The complete, high-quality Chinese translation of the refined English PoA in "poaMarkdown". It must preserve the exact same structure, headings, bold text, lists, and spacing as the English version. Translate the opening salutation (e.g. "Dear Amazon Seller Performance Team,") to a professional Chinese equivalent like "撠𦠜𨯵���撽祇�𠰴�摰嗥貍��𣪧���" and the closing (e.g. "Sincerely,") to "甇方稲�祉兮 / �砌�".
+   3. "expertAuditSuggestions": A bulleted list (in Chinese) of tips from our service provider team for the seller on how to submit this refined PoA successfully.
+ `;
+ 
+@@ -656,7 +707,7 @@ Please generate a revised, refined, and significantly stronger Plan of Action (P
+   } catch (error: any) {
+     console.error("Error refining PoA with Gemini:", error);
+     return res.status(500).json({
+-      error: "AI 申诉信 (PoA) 完善失败，请稍后重试。",
++      error: "AI �唾�靽� (PoA) 摰��憭梯揖嚗諹窈蝔滚��滩���",
+       details: error.message
+     });
+   }
+@@ -667,7 +718,7 @@ const ADMIN_PASSWORD = "jie32jiE**";
+ function adminAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
+   const authPass = req.headers["x-admin-password"] || req.query.admin_password;
+   if (authPass !== ADMIN_PASSWORD) {
+-    return res.status(401).json({ error: "未授权：密码错误或已失效。" });
++    return res.status(401).json({ error: "�芣����撖���躰秤�硋歇憭望���" });
+   }
+   next();
+ }
+@@ -684,7 +735,7 @@ app.get("/api/success-cases", (req, res) => {
+ app.post("/api/success-cases", (req, res) => {
+   const { title, type, rootCause, correctiveActions, preventiveMeasures } = req.body;
+   if (!title || !type || !rootCause) {
+-    return res.status(400).json({ error: "标题、类型和根本原因为必填项。" });
++    return res.status(400).json({ error: "�����掩�见��寞𧋦�笔�銝箏�憛恍★��" });
+   }
+ 
+   const newCase: SuccessCase = {
+@@ -708,7 +759,7 @@ app.put("/api/success-cases/:id", (req, res) => {
+ 
+   const caseIndex = cachedCases.findIndex(c => c.id === id);
+   if (caseIndex === -1) {
+-    return res.status(404).json({ error: "未找到指定的案例。" });
++    return res.status(404).json({ error: "�芣𪄳�唳�摰𡁶�獢����" });
+   }
+ 
+   cachedCases[caseIndex] = {
+@@ -729,7 +780,7 @@ app.delete("/api/success-cases/:id", (req, res) => {
+   const { id } = req.params;
+   const caseIndex = cachedCases.findIndex(c => c.id === id);
+   if (caseIndex === -1) {
+-    return res.status(404).json({ error: "未找到指定的案例。" });
++    return res.status(404).json({ error: "�芣𪄳�唳�摰𡁶�獢����" });
+   }
+ 
+   cachedCases.splice(caseIndex, 1);
+@@ -741,7 +792,7 @@ app.delete("/api/success-cases/:id", (req, res) => {
+ app.post("/api/parse-case-doc", async (req, res) => {
+   const { docText } = req.body;
+   if (!docText || docText.trim() === "") {
+-    return res.status(400).json({ error: "案例文档内容不能为空。" });
++    return res.status(400).json({ error: "獢����﹝��捆銝滩�銝箇征��" });
+   }
+ 
+   try {
+@@ -750,15 +801,15 @@ app.post("/api/parse-case-doc", async (req, res) => {
+     const systemInstruction = `
+ You are an expert Amazon Appeal Consultant. Your goal is to analyze the user's successfully appealed Plan of Action (POA) or case document and extract structured fields in high-fidelity JSON.
+ The violation type must be strictly categorized into one of:
+-- "Account Association" (关联账号)
+-- "IP Infringement" (侵权)
+-- "Review Manipulation" (刷单/操纵评论)
+-- "Product Authenticity" (产品真实性/仿品/二手当新品)
+-- "Section 3 / Code of Conduct" (商业行为/销售限制/欺诈行为)
+-- "Velocity Limit" (销量激增)
+-- "Other" (其他违规)
+-
+-You must extract the core points in Chinese (简体中文).
++- "Account Association" (�唾�韐血噡)
++- "IP Infringement" (靘菜�)
++- "Review Manipulation" (�瑕�/�滨熊霂�捏)
++- "Product Authenticity" (鈭批��笔���/隞踹�/鈭峕�敶𤘪鰵��)
++- "Section 3 / Code of Conduct" (���銵䔶蛹/���桅���/甈箄�銵䔶蛹)
++- "Velocity Limit" (���𤩺�憓�)
++- "Other" (�嗡�餈肽�)
++
++You must extract the core points in Chinese (蝞�雿㮖葉��).
+ The JSON output must conform to the defined schema. Use "gemini-3.5-flash" for this task.
+ `;
+ 
+@@ -781,7 +832,7 @@ ${docText}
+           properties: {
+             title: {
+               type: Type.STRING,
+-              description: "A concise and professional Chinese title for this appeal case, e.g., '关联销售销售限制申诉 (Section 3 Account Association)' or similar."
++              description: "A concise and professional Chinese title for this appeal case, e.g., '�唾����桅��桅��嗥𤚗霂� (Section 3 Account Association)' or similar."
+             },
+             type: {
+               type: Type.STRING,
+@@ -817,7 +868,7 @@ ${docText}
+   } catch (error: any) {
+     console.error("Error parsing case document with Gemini:", error);
+     return res.status(500).json({
+-      error: "AI 案例文档解析失败，请检查网络或提供的内容。",
++      error: "AI 獢����﹝閫��憭梯揖嚗諹窈璉��亦�蝏𨀣��𣂷����摰嫘��",
+       details: error.message
+     });
+   }
+@@ -828,7 +879,7 @@ app.post("/api/submit-audit", async (req, res) => {
+   const { contact, poaText, violationType, emailText } = req.body;
+ 
+   if (!contact || !contact.trim()) {
+-    return res.status(400).json({ error: "联系方式不能为空。" });
++    return res.status(400).json({ error: "�𠉛頂�孵�銝滩�銝箇征��" });
+   }
+ 
+   try {
+@@ -850,35 +901,35 @@ app.post("/api/submit-audit", async (req, res) => {
+     // Truncate text if it's too long to prevent exceeding DingTalk message size limits
+     const maxPoaLength = 1500;
+     const truncatedPoa = poaText && poaText.length > maxPoaLength
+-      ? `${poaText.substring(0, maxPoaLength)}\n\n...(内容过长，已被截断)`
+-      : poaText || "未提供POA草稿";
++      ? `${poaText.substring(0, maxPoaLength)}\n\n...(��捆餈�鵭嚗�歇鋡急⏛��)`
++      : poaText || "�芣�靘𢏺OA�厩阮";
+ 
+     const maxEmailLength = 1000;
+     const truncatedEmail = emailText && emailText.length > maxEmailLength
+-      ? `${emailText.substring(0, maxEmailLength)}\n\n...(内容过长，已被截断)`
+-      : emailText || "未提供原始邮件/申诉背景";
++      ? `${emailText.substring(0, maxEmailLength)}\n\n...(��捆餈�鵭嚗�歇鋡急⏛��)`
++      : emailText || "�芣�靘𥕦�憪钅�隞�/�唾��峕艶";
+ 
+     const messageData = {
+       msgtype: "markdown",
+       markdown: {
+-        title: "新的人工审核申诉请求",
+-        text: `### 🚀 收到亚马逊申诉人工审核请求
++        title: "�啁�鈭箏極摰⊥瓲�唾�霂瑟�",
++        text: `### �� �嗅�鈭𡁻帕�羓𤚗霂劐犖撌亙恣�貉窈瘙�
+ 
+-**📌 基本信息**
+-- **申请时间**: ${timeString}
+-- **违规类型**: ${violationType || "未知类型"}
+-- **联系方式**: ${contact}
++**�� �箸𧋦靽⊥�**
++- **�唾窈�園𡢿**: ${timeString}
++- **餈肽�蝐餃�**: ${violationType || "�芰䰻蝐餃�"}
++- **�𠉛頂�孵�**: ${contact}
+ 
+ ---
+ 
+-**📝 POA 申诉信初稿预览**
++**�� POA �唾�靽∪�蝔輸�閫�**
+ \`\`\`markdown
+ ${truncatedPoa}
+ \`\`\`
+ 
+ ---
+ 
+-**📧 原始业绩通知 / 诊断背景**
++**�𩣪 �笔�銝𡁶貍�𡁶䰻 / 霂𦠜鱏�峕艶**
+ \`\`\`text
+ ${truncatedEmail}
+ \`\`\`
+@@ -901,14 +952,14 @@ ${truncatedEmail}
+     const data: any = await response.json();
+     if (data.errcode !== 0) {
+       console.error("[DingTalk Error]:", data);
+-      throw new Error(`钉钉机器人推送失败: ${data.errmsg}`);
++      throw new Error(`�厰��箏膥鈭箸綫��仃韐�: ${data.errmsg}`);
+     }
+ 
+-    return res.json({ success: true, message: "人工审核请求已成功发送。" });
++    return res.json({ success: true, message: "鈭箏極摰⊥瓲霂瑟�撌脫��笔�����" });
+   } catch (error: any) {
+     console.error("Error submitting manual audit request:", error);
+     return res.status(500).json({
+-      error: "无法发送人工审核申请，请检查网络或稍后重试。",
++      error: "�䭾��煾��犖撌亙恣�貊𤚗霂瘀�霂瑟��亦�蝏𨀣�蝔滚��滩���",
+       details: error.message,
+     });
+   }
+diff --git a/src/types.ts b/src/types.ts
+index e9f7841..837c4b3 100644
+--- a/src/types.ts
++++ b/src/types.ts
+@@ -24,6 +24,7 @@ export interface SuccessCase {
+   rootCause: string;
+   correctiveActions: string[];
+   preventiveMeasures: string[];
++  requiredDocuments?: string[];
+ }
+ 
+ export interface UploadedFile {
