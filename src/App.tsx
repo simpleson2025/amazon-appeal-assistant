@@ -5,27 +5,46 @@ import Questionnaire from "./components/Questionnaire";
 import PoaReview from "./components/PoaReview";
 import AdminDashboard from "./components/AdminDashboard";
 import PublicSuccessCases from "./components/PublicSuccessCases";
+import LegalPages, { LegalDocument } from "./components/LegalPages";
 import { EmailAnalysis, GeneratedPoA, UploadedFile } from "./types";
 import {
   ShieldCheck, ArrowRight, BookOpen, AlertCircle, Sparkles,
   HelpCircle, MessageCircle, FileText, CheckCircle, RefreshCw, ArrowLeft
 } from "lucide-react";
 
+function getAnalyticsVisitorHeaders(): Record<string, string> {
+  const storageKey = "amazon_appeal_analytics_visitor";
+  let visitorId = "";
+  try {
+    visitorId = localStorage.getItem(storageKey) || "";
+    if (!visitorId) {
+      visitorId = crypto.randomUUID ? crypto.randomUUID() : `visitor-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      localStorage.setItem(storageKey, visitorId);
+    }
+  } catch (_) {
+    visitorId = `visitor-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+  return { "X-Analytics-Visitor": visitorId };
+}
+
 export default function App() {
   const [currentStep, setCurrentStep] = useState<number>(1);
 
   // Routing state
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [legalPage, setLegalPage] = useState<LegalDocument | null>(null);
 
   useEffect(() => {
     const handleUrlChange = () => {
       const isParam = window.location.search.includes("admin=true");
       const isPath = window.location.pathname.startsWith("/admin");
       setIsAdmin(isParam || isPath);
+      const document = window.location.pathname.replace("/", "");
+      setLegalPage(document === "privacy" || document === "terms" || document === "disclaimer" ? document : null);
     };
 
     handleUrlChange();
-    
+
     // Listen to history state changes
     window.addEventListener("popstate", handleUrlChange);
     return () => {
@@ -75,6 +94,29 @@ export default function App() {
     }
   };
 
+  const handleClearLocalData = () => {
+    try {
+      localStorage.removeItem("amazon_appeal_email");
+      localStorage.removeItem("manual_audit_contact");
+      localStorage.removeItem("amazon_appeal_analytics_visitor");
+    } catch (e) {
+      console.warn("Could not clear local data:", e);
+    }
+    setEmailText("");
+    setPreviousPoa("");
+    setRejectionEmail("");
+  };
+
+  const openLegalPage = (document: LegalDocument) => {
+    window.history.pushState({}, "", `/${document}`);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  };
+
+  const returnToHome = () => {
+    window.history.pushState({}, "", "/");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  };
+
   // 1. Analyze Email/Rejection with AI
   const handleAnalyzeEmail = async () => {
     if (flowType === "generate" && !emailText.trim()) return;
@@ -85,14 +127,15 @@ export default function App() {
 
     try {
       const endpoint = flowType === "generate" ? "/api/analyze-email" : "/api/analyze-rejection";
-      const body = flowType === "generate" 
-        ? { emailText } 
+      const body = flowType === "generate"
+        ? { emailText }
         : { previousPoa, rejectionEmail };
 
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...getAnalyticsVisitorHeaders(),
         },
         body: JSON.stringify(body),
       });
@@ -102,7 +145,7 @@ export default function App() {
         try {
           const errorData = await response.json();
           if (errorData?.error) errorMsg = errorData.error;
-        } catch (_) {}
+        } catch (_) { }
         throw new Error(errorMsg);
       }
 
@@ -136,22 +179,23 @@ export default function App() {
       const endpoint = flowType === "generate" ? "/api/generate-poa" : "/api/refine-poa";
       const body = flowType === "generate"
         ? {
-            emailText,
-            violationType: analysis.violationType,
-            answers,
-            additionalNotes: "",
-          }
+          emailText,
+          violationType: analysis.violationType,
+          answers,
+          additionalNotes: "",
+        }
         : {
-            previousPoa,
-            rejectionEmail,
-            violationType: analysis.violationType,
-            answers,
-          };
+          previousPoa,
+          rejectionEmail,
+          violationType: analysis.violationType,
+          answers,
+        };
 
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...getAnalyticsVisitorHeaders(),
         },
         body: JSON.stringify(body),
       });
@@ -161,7 +205,7 @@ export default function App() {
         try {
           const errorData = await response.json();
           if (errorData?.error) errorMsg = errorData.error;
-        } catch (_) {}
+        } catch (_) { }
         throw new Error(errorMsg);
       }
 
@@ -186,24 +230,25 @@ export default function App() {
       const endpoint = flowType === "generate" ? "/api/generate-poa" : "/api/refine-poa";
       const body = flowType === "generate"
         ? {
-            emailText,
-            violationType: analysis.violationType,
-            answers,
-            additionalNotes: "",
-            expertAdjustments: adjustments,
-          }
+          emailText,
+          violationType: analysis.violationType,
+          answers,
+          additionalNotes: "",
+          expertAdjustments: adjustments,
+        }
         : {
-            previousPoa,
-            rejectionEmail,
-            violationType: analysis.violationType,
-            answers,
-            expertAdjustments: adjustments,
-          };
+          previousPoa,
+          rejectionEmail,
+          violationType: analysis.violationType,
+          answers,
+          expertAdjustments: adjustments,
+        };
 
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...getAnalyticsVisitorHeaders(),
         },
         body: JSON.stringify(body),
       });
@@ -213,7 +258,7 @@ export default function App() {
         try {
           const errorData = await response.json();
           if (errorData?.error) errorMsg = errorData.error;
-        } catch (_) {}
+        } catch (_) { }
         throw new Error(errorMsg);
       }
 
@@ -259,7 +304,7 @@ export default function App() {
               </div>
             </div>
 
-            <button 
+            <button
               onClick={() => {
                 window.history.pushState({}, "", "/");
                 window.dispatchEvent(new PopStateEvent("popstate"));
@@ -282,6 +327,10 @@ export default function App() {
         </footer>
       </div>
     );
+  }
+
+  if (legalPage) {
+    return <LegalPages document={legalPage} onBack={returnToHome} />;
   }
 
   return (
@@ -326,7 +375,7 @@ export default function App() {
           <div className="absolute right-0 top-0 w-32 h-32 bg-teal-500/5 rounded-full blur-2xl" />
           <div className="flex flex-col gap-2 max-w-2xl">
             <span className="text-[10px] font-bold tracking-widest text-teal-400 uppercase">
-              100% 免费公开申诉工具
+              100% 免费申诉工具
             </span>
             <h2 className="text-xl md:text-2xl font-black text-slate-100 leading-tight">
               把违规通知交给我们，<br />
@@ -368,6 +417,8 @@ export default function App() {
               onAnalyze={handleAnalyzeEmail}
               loading={loadingAnalysis}
               error={analysisError}
+              onClearLocalData={handleClearLocalData}
+              onOpenLegalPage={openLegalPage}
             />
           )}
 
@@ -435,6 +486,14 @@ export default function App() {
             </span>
             <span>免责声明：本工具生成的申诉信由 AI 结合历史公开成功案例合成，因店铺违规具体证据链各异，最终是否恢复以亚马逊官方审核结果为准。</span>
           </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 pb-2 flex flex-col items-center gap-2 text-xs text-center">
+          <span className="text-slate-400">本服务非 Amazon 官方服务，不保证申诉结果；最终审核结果以 Amazon 独立决定为准。</span>
+          <nav className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-teal-400">
+            <button onClick={() => openLegalPage("privacy")} className="hover:text-teal-300 cursor-pointer">隐私政策</button>
+            <button onClick={() => openLegalPage("terms")} className="hover:text-teal-300 cursor-pointer">服务条款</button>
+            <button onClick={() => openLegalPage("disclaimer")} className="hover:text-teal-300 cursor-pointer">免责声明</button>
+          </nav>
         </div>
       </footer>
     </div>

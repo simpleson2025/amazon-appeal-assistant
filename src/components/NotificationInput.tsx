@@ -13,6 +13,8 @@ interface NotificationInputProps {
   onAnalyze: () => Promise<void>;
   loading: boolean;
   error: string | null;
+  onClearLocalData: () => void;
+  onOpenLegalPage: (document: "privacy" | "terms" | "disclaimer") => void;
 }
 
 const SAMPLE_EMAILS = {
@@ -178,10 +180,13 @@ export default function NotificationInput({
   setFlowType,
   onAnalyze,
   loading,
-  error
+  error,
+  onClearLocalData,
+  onOpenLegalPage
 }: NotificationInputProps) {
   const [activeSample, setActiveSample] = useState<string>("");
   const [activeRejectionSample, setActiveRejectionSample] = useState<string>("");
+  const [privacyAccepted, setPrivacyAccepted] = useState<boolean>(false);
 
   const handleApplySample = (key: keyof typeof SAMPLE_EMAILS) => {
     setEmailText(SAMPLE_EMAILS[key]);
@@ -403,6 +408,21 @@ export default function NotificationInput({
         </div>
       </div>
 
+      <div className="rounded-xl border border-teal-500/25 bg-teal-500/5 p-4 text-xs leading-relaxed">
+        <p className="font-semibold text-teal-300">提交前请确认</p>
+        <p className="mt-1 text-slate-300">本站为独立第三方 AI 辅助工具，非 Amazon 官方服务，不保证申诉成功或任何审核结果。您输入的申诉内容将发送至 AI 服务提供商处理；原始邮件草稿会保存在当前浏览器中。请勿粘贴密码、验证码、银行卡号或无关敏感信息。</p>
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <label className="flex items-start gap-2 text-slate-200 cursor-pointer">
+            <input type="checkbox" checked={privacyAccepted} onChange={(event) => setPrivacyAccepted(event.target.checked)} className="mt-0.5 accent-teal-500" />
+            <span>我已阅读并同意隐私政策、服务条款和免责声明。</span>
+          </label>
+          <button onClick={() => onOpenLegalPage("privacy")} className="text-teal-400 hover:text-teal-300">隐私政策</button>
+          <button onClick={() => onOpenLegalPage("terms")} className="text-teal-400 hover:text-teal-300">服务条款</button>
+          <button onClick={() => onOpenLegalPage("disclaimer")} className="text-teal-400 hover:text-teal-300">免责声明</button>
+          <button onClick={onClearLocalData} className="text-slate-400 hover:text-slate-200">清除本机草稿</button>
+        </div>
+      </div>
+
       {/* Error state */}
       {error && (
         <div className="bg-rose-500/10 border border-rose-500/30 p-3.5 rounded-xl text-xs text-rose-400 flex items-center gap-2">
@@ -414,9 +434,9 @@ export default function NotificationInput({
       {/* Action button */}
       <button
         onClick={onAnalyze}
-        disabled={loading || !isFormFilled}
+        disabled={loading || !isFormFilled || !privacyAccepted}
         className={`w-full py-3.5 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-all ${
-          !isFormFilled
+          !isFormFilled || !privacyAccepted
             ? "bg-slate-800 text-slate-500 cursor-not-allowed border border-transparent"
             : loading
               ? "bg-teal-500/20 text-teal-400 border border-teal-500/30 cursor-wait"

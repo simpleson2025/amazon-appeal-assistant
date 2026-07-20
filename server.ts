@@ -89,6 +89,112 @@ interface SuccessCase {
 
 let cachedCases: SuccessCase[] = [];
 const CASES_FILE_PATH = path.join(process.cwd(), "data", "success-cases.json");
+const ANALYTICS_FILE_PATH = path.join(process.cwd(), "data", "usage-analytics.json");
+
+interface DailyUsageStats {
+  visitors: string[];
+  generations: number;
+  refineGenerations: number;
+  typeCounts: Record<string, number>;
+}
+
+let usageAnalytics: Record<string, DailyUsageStats> = {};
+
+function getShanghaiDate() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date());
+}
+
+function loadUsageAnalytics() {
+  try {
+    if (fs.existsSync(ANALYTICS_FILE_PATH)) {
+      usageAnalytics = JSON.parse(fs.readFileSync(ANALYTICS_FILE_PATH, "utf-8"));
+    }
+  } catch (err) {
+    console.error("[Analytics] Error loading usage analytics:", err);
+    usageAnalytics = {};
+  }
+}
+
+function saveUsageAnalytics() {
+  try {
+    const dir = path.dirname(ANALYTICS_FILE_PATH);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(ANALYTICS_FILE_PATH, JSON.stringify(usageAnalytics, null, 2), "utf-8");
+  } catch (err) {
+    console.error("[Analytics] Error saving usage analytics:", err);
+  }
+}
+
+function getAnalyticsVisitorId(req: express.Request) {
+  const value = req.headers["x-analytics-visitor"];
+  const visitorId = Array.isArray(value) ? value[0] : value;
+  return visitorId && /^[a-zA-Z0-9-]{8,128}$/.test(visitorId) ? visitorId : null;
+}
+
+function recordUsage(req: express.Request, violationType?: string, isRefinement = false) {
+  const visitorId = getAnalyticsVisitorId(req);
+  if (!visitorId) return;
+
+  const day = getShanghaiDate();
+  const stats = usageAnalytics[day] || {
+    visitors: [],
+    generations: 0,
+    refineGenerations: 0,
+    typeCounts: {}
+  };
+
+  if (!stats.visitors.includes(visitorId)) stats.visitors.push(visitorId);
+  if (violationType) {
+    stats.generations += 1;
+    if (isRefinement) stats.refineGenerations += 1;
+    stats.typeCounts[violationType] = (stats.typeCounts[violationType] || 0) + 1;
+  }
+  usageAnalytics[day] = stats;
+  saveUsageAnalytics();
+}
+
+function getUsageAnalytics(days = 14) {
+  const dayKeys = Array.from({ length: days }, (_, index) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (days - 1 - index));
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit"
+    }).format(date);
+  });
+  const daily = dayKeys.map((date) => {
+    const stats = usageAnalytics[date];
+    return {
+      date,
+      users: stats?.visitors.length || 0,
+      generations: stats?.generations || 0,
+      refineGenerations: stats?.refineGenerations || 0
+    };
+  });
+  const rangeTypeCounts: Record<string, number> = {};
+  for (const date of dayKeys) {
+    for (const [type, count] of Object.entries(usageAnalytics[date]?.typeCounts || {})) {
+      rangeTypeCounts[type] = (rangeTypeCounts[type] || 0) + count;
+    }
+  }
+  const allVisitorIds = new Set(Object.values(usageAnalytics).flatMap((stats) => stats.visitors));
+  return {
+    daily,
+    totals: {
+      users: allVisitorIds.size,
+      generations: Object.values(usageAnalytics).reduce((total, stats) => total + stats.generations, 0),
+      todayUsers: daily[daily.length - 1]?.users || 0,
+      todayGenerations: daily[daily.length - 1]?.generations || 0
+    },
+    typeCounts: Object.entries(rangeTypeCounts)
+      .map(([type, count]) => ({ type, count }))
+      .sort((a, b) => b.count - a.count)
+  };
+}
 
 // Helper to load success cases
 function loadSuccessCases() {
@@ -328,6 +434,7 @@ Provide the analysis and evidence-collection questionnaire in structured JSON re
     }
 
     const resultJson = JSON.parse(resultText.trim());
+    recordUsage(req);
     return res.json(resultJson);
 
   } catch (error: any) {
@@ -441,6 +548,7 @@ Please analyze the rejection grounds and output the gap analysis and follow-up q
     }
 
     const resultJson = JSON.parse(resultText.trim());
+    recordUsage(req);
     return res.json(resultJson);
 
   } catch (error: any) {
@@ -587,6 +695,7 @@ CRITICAL REMINDER: The "poaMarkdown" text must be 100% strictly in English. Do n
       resultJson.poaMarkdown = cleanChineseFromEnglishPoa(resultJson.poaMarkdown);
     }
 
+    recordUsage(req, violationType);
     return res.json(resultJson);
 
   } catch (error: any) {
@@ -688,6 +797,7 @@ Please generate a revised, refined, and significantly stronger Plan of Action (P
       resultJson.poaMarkdown = cleanChineseFromEnglishPoa(resultJson.poaMarkdown);
     }
 
+    recordUsage(req, violationType, true);
     return res.json(resultJson);
 
   } catch (error: any) {
@@ -711,6 +821,13 @@ function adminAuth(req: express.Request, res: express.Response, next: express.Ne
 
 app.use("/api/success-cases", adminAuth);
 app.use("/api/parse-case-doc", adminAuth);
+app.use("/api/usage-analytics", adminAuth);
+
+app.get("/api/usage-analytics", (req, res) => {
+  const requestedDays = Number(req.query.days);
+  const days = Number.isInteger(requestedDays) ? Math.min(Math.max(requestedDays, 7), 90) : 14;
+  return res.json(getUsageAnalytics(days));
+});
 
 // 3. Success Cases CRUD Endpoints
 app.get("/api/success-cases", (req, res) => {
@@ -962,6 +1079,7 @@ ${truncatedEmail}
 async function startServer() {
   // Load success cases into memory cache from JSON file
   loadSuccessCases();
+  loadUsageAnalytics();
 
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

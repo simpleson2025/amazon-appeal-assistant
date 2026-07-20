@@ -2,12 +2,21 @@ import React, { useState, useEffect, useRef } from "react";
 import { SuccessCase } from "../types";
 import { 
   Plus, Edit2, Trash2, FileText, Upload, Sparkles, AlertCircle, 
-  CheckCircle, Loader2, ArrowLeft, Save, X, RefreshCw, ShieldCheck
+  CheckCircle, Loader2, ArrowLeft, Save, X, RefreshCw, ShieldCheck,
+  Users, FileOutput, BarChart3
 } from "lucide-react";
+
+interface UsageAnalytics {
+  daily: { date: string; users: number; generations: number; refineGenerations: number }[];
+  totals: { users: number; generations: number; todayUsers: number; todayGenerations: number };
+  typeCounts: { type: string; count: number }[];
+}
 
 export default function AdminDashboard() {
   const [cases, setCases] = useState<SuccessCase[]>([]);
   const [loadingList, setLoadingList] = useState<boolean>(true);
+  const [analytics, setAnalytics] = useState<UsageAnalytics | null>(null);
+  const [loadingAnalytics, setLoadingAnalytics] = useState<boolean>(true);
   
   // Auth states
   const [adminPassword, setAdminPassword] = useState<string>(
@@ -70,9 +79,26 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchAnalytics = async (passToUse = adminPassword) => {
+    if (!passToUse) return;
+    setLoadingAnalytics(true);
+    try {
+      const response = await fetch("/api/usage-analytics?days=14", {
+        headers: { "X-Admin-Password": passToUse }
+      });
+      if (!response.ok) throw new Error("获取使用统计失败");
+      setAnalytics(await response.json());
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingAnalytics(false);
+    }
+  };
+
   useEffect(() => {
     if (adminPassword) {
       fetchCases(adminPassword);
+      fetchAnalytics(adminPassword);
     } else {
       setLoadingList(false);
     }
@@ -103,6 +129,7 @@ export default function AdminDashboard() {
         setAdminPassword(tempPassword);
         sessionStorage.setItem("admin_password", tempPassword);
         setIsAuthorized(true);
+        fetchAnalytics(tempPassword);
         setLoginError("");
       })
       .catch((err) => {
@@ -296,6 +323,8 @@ export default function AdminDashboard() {
     reader.readAsText(file);
   };
 
+  const maxTypeCount = Math.max(1, ...(analytics?.typeCounts || []).map((item) => item.count));
+
   // 1. Password login screen
   if (!isAuthorized) {
     return (
@@ -388,6 +417,77 @@ export default function AdminDashboard() {
 
       {/* Main Content Area */}
       <div className="p-6">
+        {!isAddMode && !editingCase && (
+          <section className="mb-8 rounded-2xl border border-slate-800 bg-slate-950/35 p-5">
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-teal-400">
+                  <BarChart3 className="h-4 w-4" />
+                  <h4 className="text-sm font-bold">使用数据概览</h4>
+                </div>
+                <p className="mt-1 text-[11px] text-slate-500">统计成功完成 AI 诊断或生成的匿名访客；不保存邮件、问卷和 POA 正文。</p>
+              </div>
+              <button
+                onClick={() => fetchAnalytics(adminPassword)}
+                className="flex shrink-0 items-center gap-1 text-[11px] text-slate-500 hover:text-teal-400"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${loadingAnalytics ? "animate-spin" : ""}`} />
+                刷新统计
+              </button>
+            </div>
+
+            {loadingAnalytics && !analytics ? (
+              <div className="py-8 text-center text-xs text-slate-500">正在加载使用数据…</div>
+            ) : analytics ? (
+              <>
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-3">
+                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500"><Users className="h-3.5 w-3.5" />今日使用人数</div>
+                    <div className="mt-1 text-2xl font-black text-teal-400">{analytics.totals.todayUsers}</div>
+                  </div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-3">
+                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500"><FileOutput className="h-3.5 w-3.5" />今日生成 POA</div>
+                    <div className="mt-1 text-2xl font-black text-emerald-400">{analytics.totals.todayGenerations}</div>
+                  </div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-3">
+                    <div className="text-[11px] text-slate-500">累计使用人数</div>
+                    <div className="mt-1 text-2xl font-black text-slate-100">{analytics.totals.users}</div>
+                  </div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-3">
+                    <div className="text-[11px] text-slate-500">累计生成 POA</div>
+                    <div className="mt-1 text-2xl font-black text-slate-100">{analytics.totals.generations}</div>
+                  </div>
+                </div>
+
+                <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                  <div>
+                    <div className="mb-2 text-xs font-semibold text-slate-300">近 14 天每日使用</div>
+                    <div className="flex h-28 items-end gap-1.5 border-b border-slate-800 pb-1">
+                      {analytics.daily.map((day) => (
+                        <div key={day.date} className="group flex h-full min-w-0 flex-1 flex-col justify-end" title={`${day.date}：${day.users} 人使用，${day.generations} 次生成`}>
+                          <div className="rounded-t bg-teal-500/70 transition-all group-hover:bg-teal-400" style={{ height: `${Math.max(day.users ? 10 : 2, (day.users / Math.max(1, ...analytics.daily.map((item) => item.users))) * 100)}%` }} />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-2 flex justify-between text-[10px] text-slate-600"><span>{analytics.daily[0]?.date}</span><span>柱高＝匿名使用人数</span><span>{analytics.daily[analytics.daily.length - 1]?.date}</span></div>
+                  </div>
+                  <div>
+                    <div className="mb-2 text-xs font-semibold text-slate-300">近 14 天 POA 类型</div>
+                    <div className="space-y-2">
+                      {analytics.typeCounts.length ? analytics.typeCounts.map((item) => (
+                        <div key={item.type} className="grid grid-cols-[minmax(90px,150px)_1fr_auto] items-center gap-2 text-[11px]">
+                          <span className="truncate text-slate-400" title={item.type}>{item.type}</span>
+                          <div className="h-2 overflow-hidden rounded-full bg-slate-800"><div className="h-full rounded-full bg-emerald-400" style={{ width: `${(item.count / maxTypeCount) * 100}%` }} /></div>
+                          <span className="font-semibold text-emerald-400">{item.count}</span>
+                        </div>
+                      )) : <div className="py-6 text-center text-xs text-slate-600">暂无 POA 生成记录</div>}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : <div className="py-6 text-center text-xs text-slate-500">暂时无法读取使用统计。</div>}
+          </section>
+        )}
         {/* Case Form Panel (Add / Edit) */}
         {(isAddMode || editingCase) ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
