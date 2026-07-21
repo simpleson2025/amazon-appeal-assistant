@@ -10,9 +10,18 @@ dotenv.config();
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
+const entryPoint = process.argv[1] || "";
+const isProductionServer =
+  process.env.NODE_ENV === "production" ||
+  entryPoint.endsWith("dist/server.cjs") ||
+  entryPoint.endsWith("dist\\server.cjs");
 
 // Middleware
 app.use(express.json({ limit: "10mb" }));
+
+app.get("/healthz", (_req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 // Lazy initializer for Gemini client
 let geminiAI: GoogleGenAI | null = null;
@@ -1187,7 +1196,7 @@ async function startServer() {
   loadVideoVerificationQuestions();
   loadUsageAnalytics();
 
-  if (process.env.NODE_ENV !== "production") {
+  if (!isProductionServer) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
