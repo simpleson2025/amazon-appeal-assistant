@@ -87,9 +87,21 @@ interface SuccessCase {
   requiredDocuments?: string[];
 }
 
+interface VideoVerificationQuestion {
+  id: string;
+  category: string;
+  question: string;
+  referenceAnswer: string;
+  isRequired: boolean;
+  status?: string;
+  notes?: string;
+}
+
 let cachedCases: SuccessCase[] = [];
+let cachedVideoQuestions: VideoVerificationQuestion[] = [];
 const CASES_FILE_PATH = path.join(process.cwd(), "data", "success-cases.json");
 const ANALYTICS_FILE_PATH = path.join(process.cwd(), "data", "usage-analytics.json");
+const VIDEO_QUESTIONS_FILE_PATH = path.join(process.cwd(), "data", "video-verification-questions.json");
 
 interface DailyUsageStats {
   visitors: string[];
@@ -299,6 +311,50 @@ function saveSuccessCases() {
     console.log(`[Success Cases] Saved ${cachedCases.length} cases to file`);
   } catch (err) {
     console.error("[Success Cases] Error saving cases to file:", err);
+  }
+}
+
+function normalizeVideoQuestion(input: Partial<VideoVerificationQuestion>, fallbackId?: string): VideoVerificationQuestion {
+  return {
+    id: String(input.id || fallbackId || `vq-${Date.now()}`),
+    category: String(input.category || "未分类").trim() || "未分类",
+    question: String(input.question || "").trim(),
+    referenceAnswer: String(input.referenceAnswer || "").trim(),
+    isRequired: Boolean(input.isRequired),
+    status: String(input.status || "").trim(),
+    notes: String(input.notes || "").trim(),
+  };
+}
+
+function loadVideoVerificationQuestions() {
+  try {
+    if (fs.existsSync(VIDEO_QUESTIONS_FILE_PATH)) {
+      const data = fs.readFileSync(VIDEO_QUESTIONS_FILE_PATH, "utf-8");
+      const parsed = JSON.parse(data);
+      cachedVideoQuestions = Array.isArray(parsed)
+        ? parsed.map((item, index) => normalizeVideoQuestion(item, String(index + 1))).filter((item) => item.question)
+        : [];
+      console.log(`[Video Verification] Loaded ${cachedVideoQuestions.length} questions from ${VIDEO_QUESTIONS_FILE_PATH}`);
+    } else {
+      cachedVideoQuestions = [];
+      saveVideoVerificationQuestions();
+    }
+  } catch (err) {
+    console.error("[Video Verification] Error loading questions from file:", err);
+    cachedVideoQuestions = [];
+  }
+}
+
+function saveVideoVerificationQuestions() {
+  try {
+    const dir = path.dirname(VIDEO_QUESTIONS_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(VIDEO_QUESTIONS_FILE_PATH, JSON.stringify(cachedVideoQuestions, null, 2), "utf-8");
+    console.log(`[Video Verification] Saved ${cachedVideoQuestions.length} questions to file`);
+  } catch (err) {
+    console.error("[Video Verification] Error saving questions to file:", err);
   }
 }
 
@@ -822,6 +878,10 @@ function adminAuth(req: express.Request, res: express.Response, next: express.Ne
 app.use("/api/success-cases", adminAuth);
 app.use("/api/parse-case-doc", adminAuth);
 app.use("/api/usage-analytics", adminAuth);
+app.use("/api/video-verification-questions", (req, res, next) => {
+  if (req.method === "GET") return next();
+  return adminAuth(req, res, next);
+});
 
 app.get("/api/usage-analytics", (req, res) => {
   const requestedDays = Number(req.query.days);
@@ -890,6 +950,51 @@ app.delete("/api/success-cases/:id", (req, res) => {
 
   cachedCases.splice(caseIndex, 1);
   saveSuccessCases();
+  return res.json({ success: true });
+});
+
+// 3b. Video Verification Question CRUD Endpoints
+app.get("/api/video-verification-questions", (req, res) => {
+  return res.json(cachedVideoQuestions);
+});
+
+app.post("/api/video-verification-questions", (req, res) => {
+  const question = normalizeVideoQuestion(req.body, `vq-${Date.now()}`);
+  if (!question.question) {
+    return res.status(400).json({ error: "问题内容不能为空。" });
+  }
+
+  cachedVideoQuestions.push(question);
+  saveVideoVerificationQuestions();
+  return res.json({ success: true, question });
+});
+
+app.put("/api/video-verification-questions/:id", (req, res) => {
+  const { id } = req.params;
+  const questionIndex = cachedVideoQuestions.findIndex((item) => item.id === id);
+  if (questionIndex === -1) {
+    return res.status(404).json({ error: "未找到指定的视频验证问题。" });
+  }
+
+  const question = normalizeVideoQuestion({ ...cachedVideoQuestions[questionIndex], ...req.body, id });
+  if (!question.question) {
+    return res.status(400).json({ error: "问题内容不能为空。" });
+  }
+
+  cachedVideoQuestions[questionIndex] = question;
+  saveVideoVerificationQuestions();
+  return res.json({ success: true, question });
+});
+
+app.delete("/api/video-verification-questions/:id", (req, res) => {
+  const { id } = req.params;
+  const questionIndex = cachedVideoQuestions.findIndex((item) => item.id === id);
+  if (questionIndex === -1) {
+    return res.status(404).json({ error: "未找到指定的视频验证问题。" });
+  }
+
+  cachedVideoQuestions.splice(questionIndex, 1);
+  saveVideoVerificationQuestions();
   return res.json({ success: true });
 });
 
@@ -1079,6 +1184,7 @@ ${truncatedEmail}
 async function startServer() {
   // Load success cases into memory cache from JSON file
   loadSuccessCases();
+  loadVideoVerificationQuestions();
   loadUsageAnalytics();
 
   if (process.env.NODE_ENV !== "production") {

@@ -1,0 +1,785 @@
+[
+  {
+    "id": "1",
+    "category": "视频前准备",
+    "question": "视频前需要上传的资料",
+    "referenceAnswer": "营业执照、法人身份证、发票、收款账户证明信/信用卡账单（二选一）",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": "材料清单"
+  },
+  {
+    "id": "2",
+    "category": "视频前准备",
+    "question": "参加视频前培训过吗？",
+    "referenceAnswer": "没有",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "3",
+    "category": "视频前准备",
+    "question": "你有使用过自己的身份信息注册其他店铺？（你名下有其他亚马逊店铺吗）",
+    "referenceAnswer": "没有",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "4",
+    "category": "视频前准备",
+    "question": "今天视频只有你一个人吗？",
+    "referenceAnswer": "是的",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "5",
+    "category": "视频前准备",
+    "question": "视频的网络和设备是否干净（未登录过其他亚马逊账户）",
+    "referenceAnswer": "是，需保证网络和设备此前未登录过亚马逊账户，避免关联",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": "注意事项：设备不能登录过其他账号；网络不干净会导致账户关联"
+  },
+  {
+    "id": "6",
+    "category": "视频前准备",
+    "question": "视频环境要求",
+    "referenceAnswer": "在安静环境进行；手机调成静音；法人状态放松。视频机会只有一次",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": "注意事项"
+  },
+  {
+    "id": "7",
+    "category": "法人基础问题",
+    "question": "你是否是亚马逊账户的所有人？你叫什么名字？属相是？（必问）",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：是否是账户所有人 / 名字 / 属相"
+  },
+  {
+    "id": "8",
+    "category": "法人基础问题",
+    "question": "你的身份证号码是多少？出生年月日？身份证居住住址？（必问）",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：身份证号码 / 出生年月 / 身份证居住地址"
+  },
+  {
+    "id": "9",
+    "category": "法人基础问题",
+    "question": "身份证签发机关和有效期？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "10",
+    "category": "法人基础问题",
+    "question": "今天有带身份证吗？注册亚马逊店铺时用到的身份证就是展示的这张吗",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "11",
+    "category": "法人基础问题",
+    "question": "什么时间收到的视频邮件？邮件的语言是中文还是？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：收到邮件的时间 / 邮件的语言 / 邮件说的什么"
+  },
+  {
+    "id": "12",
+    "category": "法人基础问题",
+    "question": "视频的目的是什么？",
+    "referenceAnswer": "验证我的身份",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "13",
+    "category": "法人基础问题",
+    "question": "哪个站点收到的？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "14",
+    "category": "法人基础问题",
+    "question": "店铺的状态是什么？是否已经关店？关店时间是？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：停用/未停用 / 停用的时间 / 停用原因"
+  },
+  {
+    "id": "15",
+    "category": "法人基础问题",
+    "question": "你本次参加视频是在哪个位置（物理）？",
+    "referenceAnswer": "按照实际回答",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "16",
+    "category": "法人基础问题",
+    "question": "为什么不在公司参加视频？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "17",
+    "category": "法人基础问题",
+    "question": "今天用的什么设备视频，为什么不用电脑，现在手边有电脑吗？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "18",
+    "category": "法人基础问题",
+    "question": "在哪里看到视频（后台有收到通知吗）？",
+    "referenceAnswer": "邮箱；后台绩效通知有收到",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "19",
+    "category": "法人基础问题",
+    "question": "收到视频通知后有没有去网上调查为什么会收到这个通知？",
+    "referenceAnswer": "有，看到很多卖家都收到，猜测是亚马逊例行常规检查",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "20",
+    "category": "法人基础问题",
+    "question": "为什么今天才来参加视频？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "21",
+    "category": "公司注册问题",
+    "question": "公司名称？公司地址在哪里？公司注册时间？注册公司花费了多长时间？（必问）",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：公司名称 / 公司地址 / 实际办公地址 / 公司注册时间 / 注册公司花费的时间"
+  },
+  {
+    "id": "22",
+    "category": "公司注册问题",
+    "question": "公司附近有什么建筑吗？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "23",
+    "category": "公司注册问题",
+    "question": "公司是自己注册的吗？注册资本是多少？工商有无变更过？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：是否是自己注册的公司 / 注册资本 / 工商有无变更 / 变更时间 / 变更内容"
+  },
+  {
+    "id": "24",
+    "category": "公司注册问题",
+    "question": "注册公司的流程？去哪里注册的？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "25",
+    "category": "公司注册问题",
+    "question": "公司的监事叫什么名字？跟法人是什么关系？公司是否有合伙人？合伙人是什么时间合伙？是否有合伙协议？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：监事姓名 / 与法人的关系 / 是否有合伙人 / 入伙时间"
+  },
+  {
+    "id": "26",
+    "category": "公司注册问题",
+    "question": "公司有无股东？股东占比是多少？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：有无股东 / 股东占比"
+  },
+  {
+    "id": "27",
+    "category": "公司注册问题",
+    "question": "股东有无参与公司分红？最近一次分红时间？分红的金额？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：股东有无参与公司分红 / 分红时间 / 分红的金额"
+  },
+  {
+    "id": "28",
+    "category": "公司注册问题",
+    "question": "公司在今年哪个月的收益最好？销售额多少钱？收益好的原因是？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：效益最好的具体月份 / 销售额 / 原因"
+  },
+  {
+    "id": "29",
+    "category": "公司注册问题",
+    "question": "公司目前有多少员工？分别负责什么工作？员工工资怎么发放的？",
+    "referenceAnswer": "没有员工，就我自己；我是老板，负责全部工作",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": "示例答案：员工人数=无；分工=老板负责全部"
+  },
+  {
+    "id": "30",
+    "category": "公司注册问题",
+    "question": "公司的主营业务是什么？还有其他业务吗？除了亚马逊，有没有做其他平台？今后会考虑做其他平台吗？",
+    "referenceAnswer": "做亚马逊；无其他业务/平台；不考虑其他平台",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": "子项：公司主营业务=做亚马逊 / 是否有其他业务平台=没有 / 今后是否考虑=不考虑"
+  },
+  {
+    "id": "31",
+    "category": "公司注册问题",
+    "question": "为什么选择做亚马逊平台？",
+    "referenceAnswer": "亚马逊是全球最大的电商平台，市场很大，看好亚马逊这个平台，比较赚钱",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "32",
+    "category": "公司注册问题",
+    "question": "亚马逊店铺（公司）的主要销售什么产品？为什么选择卖这个产品？售卖最好的产品是什么？定价多少？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：主要销售产品(2-3个热销) / 售卖理由"
+  },
+  {
+    "id": "33",
+    "category": "公司注册问题",
+    "question": "你平常是怎么管理你的亚马逊账户的？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "34",
+    "category": "公司注册问题",
+    "question": "你最近一次登录账户是什么时间？谁登录的？在什么设备上登录的？",
+    "referenceAnswer": "最后一次手机登录=今天；登录人=我自己",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": "子项：最后一次手机登录时间 / 最后一次电脑登录时间 / 登录人 / 平时登录设备 / 有用过手机或平板吗 / 平时怎么登录 / 有无更换密码"
+  },
+  {
+    "id": "35",
+    "category": "公司注册问题",
+    "question": "其他人有权限进入你的账户吗？",
+    "referenceAnswer": "没有",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "36",
+    "category": "账户注册与运营",
+    "question": "亚马逊销售账户的名称是？账户的注册时间是？是谁注册的？在什么网络环境下注册的？为什么要在这个网络环境下注册账户？（必问）",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：账户名称 / 账户成功注册时间 / 注册账户人姓名 / 什么网络环境注册 / 注册原因"
+  },
+  {
+    "id": "37",
+    "category": "账户注册与运营",
+    "question": "注册账户流程",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "38",
+    "category": "账户注册与运营",
+    "question": "注册是招商经理还是官网",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "39",
+    "category": "账户注册与运营",
+    "question": "账户注册的时候是个人卖家还是企业卖家",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "40",
+    "category": "账户注册与运营",
+    "question": "当时注册的站点",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "41",
+    "category": "账户注册与运营",
+    "question": "注册账户时准备了哪些资料？（必问）",
+    "referenceAnswer": "身份证，营业执照，收款账号，信用卡，手机号码，邮箱",
+    "isRequired": true,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "42",
+    "category": "账户注册与运营",
+    "question": "账户的注册邮箱是多少？有什么含义吗？是哪家公司的邮箱？有无更换过（必问）",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：邮箱号 / 含义 / 哪家公司的邮箱 / 是否有更换过"
+  },
+  {
+    "id": "43",
+    "category": "账户注册与运营",
+    "question": "账户的注册手机号是多少？有什么含义吗？运营商是？所有人是？有无更换过（必问）",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：手机号 / 归属地 / 运营商 / 所有人 / 是否有更换过"
+  },
+  {
+    "id": "44",
+    "category": "账户注册与运营",
+    "question": "目前运营账户的网络环境是什么？（是否使用翻墙/VPN/VPS）为什么用紫鸟/VPS网络？紫鸟/VPS多少钱一个月？（必问）",
+    "referenceAnswer": "目前是在紫鸟浏览器运营；原因：出差时外面网络与公司网络不同，担心网络环境波动，故用紫鸟浏览器使IP稳定；一个月__元",
+    "isRequired": true,
+    "status": "已作答",
+    "notes": "子项：运营网络环境 / 月费用"
+  },
+  {
+    "id": "45",
+    "category": "账户注册与运营",
+    "question": "账户目前是谁在运营？法人在公司是什么职位？",
+    "referenceAnswer": "运营人=我自己；法人职位=老板，负责账户全部工作(运营+采购+配送等)",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": "子项：运营人姓名 / 法人职位"
+  },
+  {
+    "id": "46",
+    "category": "账户注册与运营",
+    "question": "目前运营了几个站点？为什么会选择该站点作为主卖国家？其他站点是否有销售？产品是否相同？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：讨论的站点 / 目前开通站点 / 目前运营站点 / 选择理由 / 是否有其他国家销售 / 产品是否相同"
+  },
+  {
+    "id": "47",
+    "category": "账户注册与运营",
+    "question": "上架的第一个产品是什么？什么时间上架的？简要描述该产品？价格有没有变动过？涨价还是降价？谁变动的？为什么变动？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "48",
+    "category": "账户注册与运营",
+    "question": "最近一次上架的是什么产品？什么时间上架的？简要描述该产品？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "49",
+    "category": "账户注册与运营",
+    "question": "收到视频验证邮件前/账户停用前出的最后一单以及该账户出的第一单是什么时候？是什么产品？简要描述下该产品？ASIN是多少？订单号是多少？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：出单时间 / 产品名称 / 描述 / ASIN和订单号（不必记具体）/ 出第一单时间 / 产品名称 / 描述"
+  },
+  {
+    "id": "50",
+    "category": "账户注册与运营",
+    "question": "最近三个月的销售额分别大概是多少？账户运营以来平均每个月订单量有多少？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "51",
+    "category": "账户注册与运营",
+    "question": "目前上架了多少产品（有多少SKU）？有删减过产品吗？删减了什么产品？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：SKU数量 / 是否有删减增加产品"
+  },
+  {
+    "id": "52",
+    "category": "账户注册与运营",
+    "question": "怎么上架产品：有使用过模板上传吗",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "53",
+    "category": "账户注册与运营",
+    "question": "简要说明你的选品思路？",
+    "referenceAnswer": "示例：借助卖家精灵等软件看市场容量和竞争性，结合利润率和市场占有量；利润率10%-15%就考虑做",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "54",
+    "category": "账户注册与运营",
+    "question": "FBA、ASIN、BUYBOX、BEST SELLER是什么意思？",
+    "referenceAnswer": "FBA：亚马逊自营物流，由亚马逊负责将产品送到买家手中；ASIN：产品代码；Buy Box：黄金购物车；Best Seller：某类目销量最好的卖家榜单；FBM：买家自配送；SKU：库存量单位",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "55",
+    "category": "账户注册与运营",
+    "question": "Listing页面具体包含哪些部分？",
+    "referenceAnswer": "主要包含产品主图、产品标题、5点描述、A+页面、产品评价等",
+    "isRequired": false,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "56",
+    "category": "账户注册与运营",
+    "question": "账户内产品的发货方式是什么？（必问）",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：发货方式 / 为什么用这种发货方式 / 是否所有产品都使用 / 最近一次发FBA时间 / 仓库名称 / 包含产品 / 发货数量 / 是否入仓 / FBA仓库库存"
+  },
+  {
+    "id": "57",
+    "category": "账户注册与运营",
+    "question": "创建FBA货件流程（怎么使用FBA创建货件/怎么通知亚马逊发一批货）",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "58",
+    "category": "账户注册与运营",
+    "question": "FBA头程和尾程用的什么物流？合作的物流商叫什么名字/为什么选择这个物流？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：头程配送方式(海运/空运/其他) / 尾程配送方式 / 货代计费 / 头程物流商公司名称 / 完整发货流程 / 选择原因 / 结算频率与支付方式 / 提供资料(产品信息及送仓地址) / 查看到货方式(物流追踪号POD) / 发货时效 / 包装外标签"
+  },
+  {
+    "id": "59",
+    "category": "账户注册与运营",
+    "question": "账户采取什么方式来推广产品？有没有使用站内广告？广告费用预算是多少？有没有使用过优惠券？平常有没有报过秒杀活动？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：推广方式 / 广告预算(xx美金/月) / 是否用优惠券 / 是否报秒杀 / 最近秒杀时间 / 秒杀价格 / 参加秒杀产品"
+  },
+  {
+    "id": "60",
+    "category": "账户注册与运营",
+    "question": "怎么创建广告的？/描述一下创建广告的具体流程",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "61",
+    "category": "账户注册与运营",
+    "question": "平常是怎么计算产品利润的？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "62",
+    "category": "账户注册与运营",
+    "question": "账户有没有使用过海外仓？海外仓的地址是？为什么要使用海外仓？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：是否使用过 / 海外仓地址 / 使用理由"
+  },
+  {
+    "id": "63",
+    "category": "账户注册与运营",
+    "question": "账户内是否有品牌？有几个品牌？品牌所有人是谁？品牌备案的时间是？品牌授权书有吗？品牌名称有什么含义？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：品牌数量 / 品牌名称 / 品牌含义 / 品牌所有人 / 备案授权时间 / 是否有证书授权书 / 与所有人关系 / 商标登记类别(是否美标)"
+  },
+  {
+    "id": "64",
+    "category": "账户注册与运营",
+    "question": "在亚马逊备案品牌或者接受品牌授权的流程是？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "65",
+    "category": "账户注册与运营",
+    "question": "在账户经营过程中，是否有收到买家的退款或者差评？有分析是什么原因吗？收到后你的处理方式是什么？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：是否收到 / 原因 / 处理方式"
+  },
+  {
+    "id": "66",
+    "category": "账户注册与运营",
+    "question": "账号目前有多少钱？是单站点的余额还是站点总的余额？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "子项：金额 / 单站点还是总余额"
+  },
+  {
+    "id": "67",
+    "category": "账户注册与运营",
+    "question": "账户有没有雇佣第三方操纵评论的行为？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "68",
+    "category": "账户注册与运营",
+    "question": "除此之外，账户有没有收到过违规警告？",
+    "referenceAnswer": "",
+    "isRequired": false,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "69",
+    "category": "收付款问题",
+    "question": "在亚马逊上绑定了几张信用卡？",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：几张 / 信用卡是否产生亚马逊费用"
+  },
+  {
+    "id": "70",
+    "category": "收付款问题",
+    "question": "账户有没有更改过信用卡？为什么更改信用卡？信用卡的卡号是？是哪家银行的？信用卡是法人的吗？为什么使用这张信用卡？",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：有无更换 / 之前卡号后四位 / 之前持卡人 / 更换时间 / 更换理由 / 目前卡号后四位 / 所属银行 / 持卡人 / 使用理由"
+  },
+  {
+    "id": "71",
+    "category": "收付款问题",
+    "question": "信用卡账单有带吗，什么时候下载的信用卡账单，怎么下载的",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "72",
+    "category": "收付款问题",
+    "question": "有没有更改过账户收款方式？为什么更改收款账户？现在收款账户的卡号是？更换的时间？收款账户是以什么方式实名的？",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：有无更换收款账户 / 之前卡号后三位 / 之前持卡人 / 更换时间 / 更换理由 / 目前卡号后三位 / 分配站点 / 所属平台 / 实名人是 / 收哪种货币 / 绑定提现卡卡号 / 所属银行 / 持卡人"
+  },
+  {
+    "id": "73",
+    "category": "收付款问题",
+    "question": "收款账户有子账户吗",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "74",
+    "category": "收付款问题",
+    "question": "收款账户是谁注册的？注册流程是什么？",
+    "referenceAnswer": "注册人=；流程：用邮箱和手机号注册，实名认证，申请收款账户，最后绑定亚马逊后台",
+    "isRequired": true,
+    "status": "已作答",
+    "notes": "子项：收款注册人姓名 / 注册流程"
+  },
+  {
+    "id": "75",
+    "category": "收付款问题",
+    "question": "收款平台叫什么？为什么使用这家平台？",
+    "referenceAnswer": "1：收费低（费率多少）；2：提现到账快；3：身边朋友都在用，比较靠谱",
+    "isRequired": true,
+    "status": "已作答",
+    "notes": "子项：平台名称 / 选择原因"
+  },
+  {
+    "id": "76",
+    "category": "收付款问题",
+    "question": "您怎么登陆您的收款平台？",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "77",
+    "category": "收付款问题",
+    "question": "最近一次提款是在什么时候？哪个站点提的款？提了多少钱？是否到账？",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：最近提款时间 / 提款站点 / 提款金额 / 是否到账 / 手动还是自动 / 提款频率"
+  },
+  {
+    "id": "78",
+    "category": "收付款问题",
+    "question": "最近一次扣月租是什么时间？信用卡还是账户余额划扣？除了月租外，亚马逊还有哪些扣费项目？",
+    "referenceAnswer": "扣费项目另有：产品佣金+仓储费等",
+    "isRequired": true,
+    "status": "已作答",
+    "notes": "子项：扣月租时间 / 扣费方式 / 扣费项目(佣金+仓储费) / 月租金额"
+  },
+  {
+    "id": "79",
+    "category": "供应链问题",
+    "question": "目前合作的有几个供应商？",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "示例：x家供应商"
+  },
+  {
+    "id": "80",
+    "category": "供应链问题",
+    "question": "供应商的公司叫什么名字？供应商的法人名字是？你们是怎么认识的？为什么选择这个供应商？",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "子项：供应商公司名 / 供应商法人名 / 怎么认识的及时间 / 供应商公司地址 / 理由(样品质量过关、性价比高)"
+  },
+  {
+    "id": "81",
+    "category": "供应链问题",
+    "question": "这个供应商与品牌方是什么关系？",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "82",
+    "category": "供应链问题",
+    "question": "最近一次采购记录是什么时候？",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "文档未给答案，视频时由法人按真实情况回答"
+  },
+  {
+    "id": "83",
+    "category": "供应链问题",
+    "question": "采购的时候有开发票吗？",
+    "referenceAnswer": "有",
+    "isRequired": true,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "84",
+    "category": "供应链问题",
+    "question": "与供应商交易的付款是怎样的？",
+    "referenceAnswer": "库存不够时先电话沟通要货量，生产完成后供应商寄到，货到确认无误后转账；用支付宝/",
+    "isRequired": true,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "85",
+    "category": "供应链问题",
+    "question": "是否可以展示转让给供应商的货款记录？",
+    "referenceAnswer": "",
+    "isRequired": true,
+    "status": "待实际回答",
+    "notes": "提示：有真实采购记录可提前准备；没有则按以下应对——用电脑的话在工作机/私人手机，今天没带，担心影响视频；用手机的话在视频手机上，需视频后补交"
+  },
+  {
+    "id": "86",
+    "category": "供应链问题",
+    "question": "产品是线上还是线下采购？",
+    "referenceAnswer": "线上",
+    "isRequired": true,
+    "status": "已作答",
+    "notes": ""
+  },
+  {
+    "id": "87",
+    "category": "供应链问题",
+    "question": "视频前是否有上传资料？",
+    "referenceAnswer": "有，上传：身份证，营业执照，发票，收款账户证明信（暂定）",
+    "isRequired": true,
+    "status": "已作答",
+    "notes": ""
+  }
+]

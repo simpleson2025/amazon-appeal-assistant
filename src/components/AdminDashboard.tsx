@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { SuccessCase } from "../types";
-import { 
-  Plus, Edit2, Trash2, FileText, Upload, Sparkles, AlertCircle, 
+import VideoVerificationAdmin from "./VideoVerificationAdmin";
+import {
+  Plus, Edit2, Trash2, FileText, Upload, Sparkles, AlertCircle,
   CheckCircle, Loader2, ArrowLeft, Save, X, RefreshCw, ShieldCheck,
   Users, FileOutput, BarChart3
 } from "lucide-react";
@@ -13,11 +14,12 @@ interface UsageAnalytics {
 }
 
 export default function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState<"cases" | "video">("cases");
   const [cases, setCases] = useState<SuccessCase[]>([]);
   const [loadingList, setLoadingList] = useState<boolean>(true);
   const [analytics, setAnalytics] = useState<UsageAnalytics | null>(null);
   const [loadingAnalytics, setLoadingAnalytics] = useState<boolean>(true);
-  
+
   // Auth states
   const [adminPassword, setAdminPassword] = useState<string>(
     () => sessionStorage.getItem("admin_password") || ""
@@ -49,7 +51,7 @@ export default function AdminDashboard() {
       setIsAuthorized(false);
       return;
     }
-    
+
     setLoadingList(true);
     try {
       const response = await fetch("/api/success-cases", {
@@ -57,14 +59,14 @@ export default function AdminDashboard() {
           "X-Admin-Password": passToUse
         }
       });
-      
+
       if (response.status === 401) {
         setIsAuthorized(false);
         sessionStorage.removeItem("admin_password");
         setAdminPassword("");
         throw new Error("认证失败：密码错误或已过期。");
       }
-      
+
       if (!response.ok) throw new Error("获取案例列表失败");
       const data = await response.json();
       setCases(data);
@@ -108,7 +110,7 @@ export default function AdminDashboard() {
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!tempPassword.trim()) return;
-    
+
     setLoadingList(true);
     setLoginError("");
 
@@ -197,7 +199,7 @@ export default function AdminDashboard() {
 
       const response = await fetch(url, {
         method,
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "X-Admin-Password": adminPassword
         },
@@ -262,7 +264,7 @@ export default function AdminDashboard() {
     try {
       const response = await fetch("/api/parse-case-doc", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "X-Admin-Password": adminPassword
         },
@@ -282,7 +284,7 @@ export default function AdminDashboard() {
       }
 
       const data = await response.json();
-      
+
       // Auto-fill form fields
       setFormTitle(data.title || "导入的成功申诉案例");
       setFormType(data.type || "Other");
@@ -331,7 +333,7 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-center min-h-[450px] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8 bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-1/4 w-[200px] h-[200px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
-          
+
           <div className="text-center">
             <div className="mx-auto bg-gradient-to-tr from-teal-500 to-emerald-400 p-3.5 rounded-2xl w-14 h-14 flex items-center justify-center shadow-lg shadow-teal-500/15">
               <ShieldCheck className="h-7 w-7 text-slate-950 stroke-[2.5]" />
@@ -396,7 +398,7 @@ export default function AdminDashboard() {
           </div>
           <div>
             <h3 className="font-black text-lg text-slate-100 tracking-wide">
-              申诉案例知识库后台 (Admin Portal)
+              管理后台 (Admin Portal)
             </h3>
             <p className="text-xs text-slate-400">
               在这里上传并维护申诉成功案例，AI 将在后台学习它们以改进 POA 生成算法
@@ -404,7 +406,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {!isAddMode && !editingCase && (
+        {activeTab === "cases" && !isAddMode && !editingCase && (
           <button
             onClick={handleOpenAdd}
             className="flex items-center gap-2 bg-gradient-to-r from-teal-500 to-emerald-400 hover:from-teal-400 hover:to-emerald-300 text-slate-950 font-bold px-4 py-2 rounded-xl transition-all shadow-lg shadow-teal-500/20 text-xs cursor-pointer"
@@ -418,6 +420,33 @@ export default function AdminDashboard() {
       {/* Main Content Area */}
       <div className="p-6">
         {!isAddMode && !editingCase && (
+          <div className="mb-6 flex rounded-xl border border-slate-800 bg-slate-950/35 p-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab("cases")}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-xs font-bold transition-all ${activeTab === "cases"
+                  ? "bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/10"
+                  : "text-slate-400 hover:bg-slate-900/70 hover:text-slate-100"
+                }`}
+            >
+              <FileText className="h-4 w-4" />
+              申诉案例知识库
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("video")}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-xs font-bold transition-all ${activeTab === "video"
+                  ? "bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/10"
+                  : "text-slate-400 hover:bg-slate-900/70 hover:text-slate-100"
+                }`}
+            >
+              <ShieldCheck className="h-4 w-4" />
+              亚马逊视频验证题库
+            </button>
+          </div>
+        )}
+
+        {activeTab === "cases" && !isAddMode && !editingCase && (
           <section className="mb-8 rounded-2xl border border-slate-800 bg-slate-950/35 p-5">
             <div className="mb-4 flex items-start justify-between gap-4">
               <div>
@@ -489,7 +518,16 @@ export default function AdminDashboard() {
           </section>
         )}
         {/* Case Form Panel (Add / Edit) */}
-        {(isAddMode || editingCase) ? (
+        {activeTab === "video" && !isAddMode && !editingCase ? (
+          <VideoVerificationAdmin
+            adminPassword={adminPassword}
+            onAuthExpired={() => {
+              setIsAuthorized(false);
+              sessionStorage.removeItem("admin_password");
+              setAdminPassword("");
+            }}
+          />
+        ) : (isAddMode || editingCase) ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Left Col: AI Import Helper */}
             {isAddMode && (
@@ -503,19 +541,19 @@ export default function AdminDashboard() {
                 </p>
 
                 {/* Upload Zone */}
-                <div 
+                <div
                   onClick={() => fileInputRef.current?.click()}
                   className="border-2 border-dashed border-slate-800 hover:border-teal-500/50 hover:bg-slate-950/40 rounded-xl p-5 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   <Upload className="h-6 w-6 text-slate-500" />
                   <span className="text-xs font-semibold text-slate-300">点击上传成功案例文档 (.txt/.md)</span>
                   <span className="text-[10px] text-slate-500">文件会在本地浏览器读取</span>
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    onChange={handleFileUpload} 
-                    accept=".txt,.md" 
-                    className="hidden" 
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileUpload}
+                    accept=".txt,.md"
+                    className="hidden"
                   />
                 </div>
 
@@ -550,11 +588,10 @@ export default function AdminDashboard() {
                 </button>
 
                 {parseStatus && (
-                  <div className={`flex items-start gap-2 p-3 rounded-xl border text-[11px] ${
-                    parseStatus.type === "success" 
+                  <div className={`flex items-start gap-2 p-3 rounded-xl border text-[11px] ${parseStatus.type === "success"
                       ? "bg-teal-500/10 border-teal-500/20 text-teal-300"
                       : "bg-rose-500/10 border-rose-500/20 text-rose-300"
-                  }`}>
+                    }`}>
                     {parseStatus.type === "success" ? (
                       <CheckCircle className="h-4 w-4 shrink-0 text-teal-400" />
                     ) : (
@@ -567,8 +604,8 @@ export default function AdminDashboard() {
             )}
 
             {/* Right Col: Editable form */}
-            <form 
-              onSubmit={handleSave} 
+            <form
+              onSubmit={handleSave}
               className={`flex flex-col gap-4 ${isAddMode ? "lg:col-span-7" : "lg:col-span-12"}`}
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-2">
@@ -587,7 +624,7 @@ export default function AdminDashboard() {
               {/* Title */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-slate-300">案例标题 (显示在后台备忘)：</label>
-                <input 
+                <input
                   type="text"
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
@@ -601,7 +638,7 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-slate-300">亚马逊违规分类 (必填，AI 学习索引凭据)：</label>
-                  <select 
+                  <select
                     value={formType}
                     onChange={(e) => setFormType(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:border-teal-500/50 focus:outline-none"
@@ -620,7 +657,7 @@ export default function AdminDashboard() {
               {/* Root Cause */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-slate-300">根本原因分析 (Root Cause)：</label>
-                <textarea 
+                <textarea
                   value={formRootCause}
                   onChange={(e) => setFormRootCause(e.target.value)}
                   placeholder="阐明为什么会出现这个违规，如：采购没有核实授权链条、误用他人商标等..."
@@ -635,7 +672,7 @@ export default function AdminDashboard() {
                   <label className="text-xs font-semibold text-slate-300">
                     立即纠正措施 (每行代表一个条目)：
                   </label>
-                  <textarea 
+                  <textarea
                     value={formCorrectiveActions}
                     onChange={(e) => setFormCorrectiveActions(e.target.value)}
                     placeholder="彻底删除 Listing&#10;向品牌方致歉和解&#10;销毁违规产品库存..."
@@ -647,7 +684,7 @@ export default function AdminDashboard() {
                   <label className="text-xs font-semibold text-slate-300">
                     长期防范措施 (每行代表一个条目)：
                   </label>
-                  <textarea 
+                  <textarea
                     value={formPreventiveMeasures}
                     onChange={(e) => setFormPreventiveMeasures(e.target.value)}
                     placeholder="建立双人选品专利交叉检索&#10;只向有一手授权的工厂进货并开专票&#10;对员工进行定期的亚马逊合规培训..."
@@ -689,12 +726,12 @@ export default function AdminDashboard() {
               </div>
             </form>
           </div>
-        ) : (
+        ) : activeTab === "cases" ? (
           /* List of cases view */
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between text-xs text-slate-500">
               <span>所有成功申诉案例 ({cases.length}) — 从新到旧排列</span>
-              <button 
+              <button
                 onClick={() => fetchCases(adminPassword)}
                 className="flex items-center gap-1 hover:text-teal-400 transition-colors p-1 cursor-pointer"
                 title="刷新列表"
@@ -774,7 +811,7 @@ export default function AdminDashboard() {
               </div>
             )}
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

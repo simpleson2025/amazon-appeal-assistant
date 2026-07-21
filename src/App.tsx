@@ -6,10 +6,11 @@ import PoaReview from "./components/PoaReview";
 import AdminDashboard from "./components/AdminDashboard";
 import PublicSuccessCases from "./components/PublicSuccessCases";
 import LegalPages, { LegalDocument } from "./components/LegalPages";
+import VideoVerificationPractice from "./components/VideoVerificationPractice";
 import { EmailAnalysis, GeneratedPoA, UploadedFile } from "./types";
 import {
   ShieldCheck, ArrowRight, BookOpen, AlertCircle, Sparkles,
-  HelpCircle, MessageCircle, FileText, CheckCircle, RefreshCw, ArrowLeft
+  HelpCircle, MessageCircle, FileText, CheckCircle, RefreshCw, ArrowLeft, Video
 } from "lucide-react";
 
 function getAnalyticsVisitorHeaders(): Record<string, string> {
@@ -33,6 +34,7 @@ export default function App() {
   // Routing state
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [legalPage, setLegalPage] = useState<LegalDocument | null>(null);
+  const [isVideoPractice, setIsVideoPractice] = useState<boolean>(false);
 
   useEffect(() => {
     const handleUrlChange = () => {
@@ -41,6 +43,7 @@ export default function App() {
       setIsAdmin(isParam || isPath);
       const document = window.location.pathname.replace("/", "");
       setLegalPage(document === "privacy" || document === "terms" || document === "disclaimer" ? document : null);
+      setIsVideoPractice(window.location.pathname.startsWith("/video-verification"));
     };
 
     handleUrlChange();
@@ -114,6 +117,11 @@ export default function App() {
 
   const returnToHome = () => {
     window.history.pushState({}, "", "/");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  };
+
+  const openVideoPractice = () => {
+    window.history.pushState({}, "", "/video-verification");
     window.dispatchEvent(new PopStateEvent("popstate"));
   };
 
@@ -333,6 +341,29 @@ export default function App() {
     return <LegalPages document={legalPage} onBack={returnToHome} />;
   }
 
+  if (isVideoPractice) {
+    return (
+      <div className="min-h-screen bg-slate-950 font-sans text-slate-100 selection:bg-teal-500/30 selection:text-teal-200">
+        <header className="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="bg-gradient-to-tr from-teal-500 to-emerald-400 p-2.5 rounded-xl shadow-lg shadow-teal-500/10 flex items-center justify-center">
+                <ShieldCheck className="h-6 w-6 text-slate-950 stroke-[2.5]" />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-base font-black text-slate-100 tracking-wide">Amazon Appeal AI</h1>
+                <p className="text-[10px] text-slate-400">亚马逊视频验证模拟练习</p>
+              </div>
+            </div>
+          </div>
+        </header>
+        <main className="max-w-7xl mx-auto px-4 py-8">
+          <VideoVerificationPractice onBack={returnToHome} />
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 font-sans text-slate-100 selection:bg-teal-500/30 selection:text-teal-200">
       {/* Decorative ambient background glows */}
@@ -357,6 +388,13 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={openVideoPractice}
+              className="hidden sm:flex items-center gap-1.5 bg-slate-900 border border-slate-800 hover:border-teal-500/40 text-slate-300 hover:text-teal-300 text-[11px] font-bold px-3 py-1.5 rounded-full transition-all cursor-pointer"
+            >
+              <Video className="h-3.5 w-3.5" />
+              视频验证练习
+            </button>
             <span className="hidden sm:inline-flex items-center gap-1 bg-teal-500/10 border border-teal-500/20 text-teal-400 text-[10px] font-bold px-2.5 py-1 rounded-full">
               ● AI 专家实时在线
             </span>
@@ -375,7 +413,7 @@ export default function App() {
           <div className="absolute right-0 top-0 w-32 h-32 bg-teal-500/5 rounded-full blur-2xl" />
           <div className="flex flex-col gap-2 max-w-2xl">
             <span className="text-[10px] font-bold tracking-widest text-teal-400 uppercase">
-              100% 免费申诉工具
+              免费申诉工具
             </span>
             <h2 className="text-xl md:text-2xl font-black text-slate-100 leading-tight">
               把违规通知交给我们，<br />
@@ -387,15 +425,14 @@ export default function App() {
           </div>
 
           <div className="flex flex-col gap-2.5 bg-slate-950/80 border border-slate-800 p-4.5 rounded-xl min-w-[240px]">
-            <span className="text-[11px] font-bold text-slate-300">系统已支持的违规场景：</span>
-            <div className="grid grid-cols-2 gap-1.5 text-[10px] text-slate-400">
-              <span className="flex items-center gap-1">✅ 关联销售限制</span>
-              <span className="flex items-center gap-1">✅ 虚假评论操纵</span>
-              <span className="flex items-center gap-1">✅ 知识产权侵权</span>
-              <span className="flex items-center gap-1">✅ 产品真实性质疑</span>
-              <span className="flex items-center gap-1">✅ Section 3 商业行为</span>
-              <span className="flex items-center gap-1">✅ 销量激增风控</span>
-            </div>
+            <span className="text-[11px] font-bold text-slate-300">系统已支持模拟视频验证</span>
+            <button
+              onClick={openVideoPractice}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-teal-500/35 bg-teal-500/10 px-4 py-2.5 text-xs font-bold text-teal-300 transition-all hover:border-teal-400/70 hover:bg-teal-500/15"
+            >
+              <Video className="h-4 w-4" />
+              开始视频验证模拟练习
+            </button>
           </div>
         </div>
 

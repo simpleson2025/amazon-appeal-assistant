@@ -27,6 +27,16 @@ export interface SuccessCase {
   requiredDocuments?: string[];
 }
 
+export interface VideoVerificationQuestion {
+  id: string;
+  category: string;
+  question: string;
+  referenceAnswer: string;
+  isRequired: boolean;
+  status?: string;
+  notes?: string;
+}
+
 export interface UploadedFile {
   id: string;
   name: string;
